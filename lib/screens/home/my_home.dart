@@ -6,6 +6,7 @@ import 'package:meditrina_01/screens/drawers/drawer.dart';
 import 'package:meditrina_01/screens/find_a_doctor/doctor.dart';
 import 'package:meditrina_01/screens/specialities/specialities.dart';
 import 'package:meditrina_01/screens/venue/venue.dart';
+import 'package:meditrina_01/util/routes.dart';
 import 'package:meditrina_01/widgets/my_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,13 +20,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  Color color = const Color.fromARGB(
+    255,
+    8,
+    164,
+    196,
+  );
   Timer? _timer;
 
   final List<String> _imageUrls = [
     "assets/images/top_image.jpg",
-    "assets/images/dr1.jpeg",
-    "assets/images/dr1.jpeg",
-    "assets/images/dr1.jpeg",
+    "assets/images/abuss.jpg",
+    "assets/images/aabbuuss.jpg",
+    "assets/images/s1.png",
   ];
 
   final List<Map<String, dynamic>> gridItems = [
@@ -156,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     Image.asset(
                       gridItems[rowIndex * 3 + index]["icon"],
-                      color: Colors.cyan[600],
+                      color: color,
                     ),
                     SizedBox(height: 2),
                     Text(
@@ -210,7 +217,14 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(
+          "Meditrina Hospital",
+          style: TextStyle(
+              color: color, fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        backgroundColor: Colors.white,
+      ),
       drawer: const MyDrawer(),
       body: SingleChildScrollView(
         child: Column(
@@ -273,8 +287,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(
                     child: Marquee(
                       text: 'Meditrina Institute Of Medical Sciences... 🚀',
-                      style: const TextStyle(
-                          color: Colors.blueAccent,
+                      style: TextStyle(
+                          color: color,
                           fontSize: 20,
                           fontWeight: FontWeight.bold),
                       scrollAxis: Axis.horizontal,
@@ -299,7 +313,16 @@ class _MyHomePageState extends State<MyHomePage> {
             buildDivider(),
             buildRow(1, context),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  MyRoutes.book_appointment,
+                  arguments: {
+                    'doctorName': '',
+                    'departmentName': '',
+                  },
+                );
+              },
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: SizedBox(
@@ -366,7 +389,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       Text(
                         "About Us", // ✅ Change text as needed
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.normal),
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: color),
                       ),
                     ],
                   ),
@@ -399,10 +424,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       const SizedBox(
                           height: 8), // ✅ Space between image and text
-                      const Text(
+                      Text(
                         "Our Facilities", // ✅ Change text as needed
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.normal),
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: color),
                       ),
                     ],
                   ),
@@ -418,12 +445,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 📌 Title/Text at the Top
-                  const Text(
+                  Text(
                     "Meditrina Hospital, 278, Central Bazar Road, Ramdaspeth", // ✅ Change text as needed
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.normal,
-                        color: const Color.fromARGB(255, 8, 91, 99)),
+                        color: color),
                   ),
                   SizedBox(height: 8), // ✅ Space between text & image
 
@@ -439,7 +466,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           "assets/images/google.jpg",
                           width: double.infinity,
                           height: 200,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         ),
                       ),
 

@@ -15,6 +15,12 @@ class PatientPortal extends StatefulWidget {
 
 class _PatientPortalState extends State<PatientPortal> {
   final TextEditingController phoneController = TextEditingController();
+  Color color = const Color.fromARGB(
+    255,
+    8,
+    164,
+    196,
+  );
   String otpValue = "";
   String buttonText = "Get OTP";
   bool isOtpFieldVisible = false;
@@ -128,29 +134,80 @@ class _PatientPortalState extends State<PatientPortal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("OTP Verification")),
+      appBar: AppBar(
+        backgroundColor: color,
+        title: Text(
+          "Login",
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
       drawer: const MyDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Image.asset(
+              "assets/images/kk.jpg",
+              width: 80, // Adjust size as needed
+              height: 80,
+              fit: BoxFit.contain,
+            ),
+
+            SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RichText(
+                text: TextSpan(
+                  style: TextStyle(fontSize: 12, color: color), // Default style
+                  children: [
+                    TextSpan(text: "Book an "),
+                    TextSpan(
+                      text: "Appointment",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: " and "),
+                    TextSpan(
+                      text: "Experience Quality",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: " with us."),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 40,
+            ),
             TextField(
               controller: phoneController,
               keyboardType: TextInputType.phone,
               maxLength: 10,
               decoration: InputDecoration(
-                labelText: "Mobile Number",
-                border: OutlineInputBorder(),
+                labelText: "Medical Registered Mobile Number",
+                labelStyle: TextStyle(color: color),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.grey), // Default bottom line (gray)
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                      color: color, width: 1), // Blue bottom line when focused
+                ),
+                // border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.call, color: color), // Call icon
               ),
             ),
+
             SizedBox(height: 20),
 
             // OTP Input Field
             if (isOtpFieldVisible)
               OtpTextField(
                 numberOfFields: 6,
-                borderColor: Colors.blue,
+                borderColor: color,
                 showFieldAsBox: true,
                 fieldWidth: 40,
                 onCodeChanged: (String code) {
@@ -162,22 +219,31 @@ class _PatientPortalState extends State<PatientPortal> {
               ),
             SizedBox(height: 20),
 
-            ElevatedButton(
-              onPressed: isLoading
-                  ? null
-                  : () {
-                      if (buttonText == "Get OTP" ||
-                          buttonText == "Resend OTP") {
-                        sendOtp();
-                      } else {
-                        verifyOtp();
-                      }
-                    },
-              style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50)),
-              child: isLoading
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : Text(buttonText, style: TextStyle(fontSize: 18)),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        if (buttonText == "Get OTP" ||
+                            buttonText == "Resend OTP") {
+                          sendOtp();
+                        } else {
+                          verifyOtp();
+                        }
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: color,
+                  minimumSize: Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12), // Rounded edges
+                  ),
+                ),
+                child: isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text(buttonText,
+                        style: TextStyle(fontSize: 18, color: Colors.white)),
+              ),
             ),
 
             // Resend OTP Timer with Message

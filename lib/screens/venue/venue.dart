@@ -10,6 +10,12 @@ class MyVenue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color color = const Color.fromARGB(
+      255,
+      8,
+      164,
+      196,
+    );
     return Positioned(
       bottom: 24, // ✅ Positioning from bottom
       child: ElevatedButton.icon(
@@ -21,7 +27,7 @@ class MyVenue extends StatelessWidget {
         label: Text("Directions"),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white, // ✅ Button color
-          foregroundColor: Colors.blue, // ✅ Text color
+          foregroundColor: color, // ✅ Text color
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

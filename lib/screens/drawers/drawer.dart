@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meditrina_01/screens/contact_us/contact_us.dart';
+import 'package:meditrina_01/screens/home/my_home.dart';
 import 'package:meditrina_01/screens/patient_portal/patient_portal.dart';
 import 'package:meditrina_01/util/routes.dart';
 
@@ -27,9 +28,12 @@ class _MyDrawerState extends State<MyDrawer> {
   }
 
   // 📌 Drawer Item Widget
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+  Widget _buildDrawerItem(String icon, String title, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(icon, color: Colors.blue),
+      leading: Image.asset(
+        icon,
+        height: 20,
+      ),
       title: Text(title),
       onTap: onTap,
     );
@@ -69,14 +73,23 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
 
           ListTile(
-            leading: Icon(Icons.home),
+            leading: Image.asset(
+              "assets/images/k5.png",
+              height: 20,
+            ),
             title: Text("Home"),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyHomePage()),
+              );
             },
           ),
           ListTile(
-            leading: Icon(Icons.settings),
+            leading: Image.asset(
+              "assets/images/user.png",
+              height: 20,
+            ),
             title: Text("Patient Portal"),
             onTap: () {
               Navigator.push(
@@ -86,12 +99,18 @@ class _MyDrawerState extends State<MyDrawer> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.logout),
+            leading: Image.asset(
+              "assets/images/dd5.png",
+              height: 20,
+            ),
             title: Text("Plan Your Visit"),
             onTap: () {},
           ),
           ListTile(
-            leading: Icon(Icons.logout),
+            leading: Image.asset(
+              "assets/images/ankk2.png",
+              height: 20,
+            ),
             title: Text("Contact Us"),
             onTap: () {
               Navigator.push(
@@ -102,20 +121,24 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           // 🏠 Home Section
           _buildSectionHeader("Services"),
-          _buildDrawerItem(Icons.dashboard, "Online Pathalogy", () {
+          _buildDrawerItem("assets/images/ankk.png", "Online Pathalogy", () {
             Navigator.pushReplacementNamed(context, MyRoutes.online_pathalogy);
           }),
-          _buildDrawerItem(Icons.notifications, "Service Providers", () {}),
-          _buildDrawerItem(Icons.notifications, "Homecare Assistance", () {}),
-          _buildDrawerItem(Icons.notifications, "Homecare Assistance", () {}),
-          _buildDrawerItem(Icons.notifications, "Promotions & Packages", () {}),
-          _buildDrawerItem(Icons.notifications, "Medical Tourism", () {}),
-          _buildDrawerItem(Icons.notifications, "Gallery", () {}),
-          _buildDrawerItem(Icons.notifications, "Patient Rights", () {}),
-          _buildDrawerItem(Icons.notifications, "Health Tips", () {}),
-          _buildDrawerItem(Icons.notifications, "Affiliations", () {}),
-          _buildDrawerItem(Icons.notifications, "Pay Online", () {}),
-          _buildDrawerItem(Icons.notifications, "Feedback Form", () {}),
+          _buildDrawerItem(
+              "assets/images/group.png", "Service Providers", () {}),
+          _buildDrawerItem(
+              "assets/images/user.png", "Homecare Assistance", () {}),
+          _buildDrawerItem(
+              "assets/images/user.png", "Homecare Assistance", () {}),
+          _buildDrawerItem(
+              "assets/images/user.png", "Promotions & Packages", () {}),
+          _buildDrawerItem("assets/images/user.png", "Medical Tourism", () {}),
+          _buildDrawerItem("assets/images/user.png", "Gallery", () {}),
+          _buildDrawerItem("assets/images/user.png", "Patient Rights", () {}),
+          _buildDrawerItem("assets/images/user.png", "Health Tips", () {}),
+          _buildDrawerItem("assets/images/user.png", "Affiliations", () {}),
+          _buildDrawerItem("assets/images/user.png", "Pay Online", () {}),
+          _buildDrawerItem("assets/images/user.png", "Feedback Form", () {}),
         ],
       ),
     );
