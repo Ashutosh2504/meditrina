@@ -26,28 +26,32 @@ class _MySpecialitiesState extends State<MySpecialities> {
     List<Map<String, dynamic>> apiData = [
       {
         "title": "Radiology",
-        "icon": Icons.medical_services,
+        "icon": "assets/images/speciality.png",
         "screen": ScreenOne()
       },
       {
         "title": "Neurological Surgery",
-        "icon": Icons.healing,
+        "icon": "assets/images/speciality.png",
         "screen": ScreenTwo()
       },
-      {"title": "Ambulance", "icon": Icons.local_taxi, "phone": "102"},
+      {
+        "title": "Ambulance",
+        "icon": "assets/images/speciality.png",
+        "phone": "102"
+      },
       {
         "title": "Pharmacy",
-        "icon": Icons.local_pharmacy,
+        "icon": "assets/images/speciality.png",
         "screen": ScreenThree()
       },
       {
         "title": "Lab Tests",
-        "icon": Icons.science,
+        "icon": "assets/images/speciality.png",
         "url": "https://www.labtests.com"
       },
       {
         "title": "Appointments",
-        "icon": Icons.calendar_today,
+        "icon": "assets/images/speciality.png",
         "url": "https://www.appointments.com"
       },
     ];
@@ -90,6 +94,69 @@ class _MySpecialitiesState extends State<MySpecialities> {
     }
   }
 
+  Widget buildDivider() {
+    return Container(
+      height: 0.5,
+      color: Colors.black,
+    );
+  }
+
+  Widget buildRow(int rowIndex, BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(3, (index) {
+        return Container(
+          width: queryData.size.width / 3,
+          height: queryData.size.height / 8, // Fixed width
+          decoration: BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                color: index == 0 ? Colors.transparent : Colors.black,
+                width: index == 0 ? 0 : 0.5, // Vertical separation
+              ),
+            ),
+          ),
+          alignment: Alignment.center,
+          // padding: EdgeInsets.all(8), // Reduce padding to fit content
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: () {
+                //
+                if (rowIndex == 0) {
+                  _handleTap(context, gridItems[index]);
+                } else if (rowIndex == 1) {
+                  _handleTap(context, gridItems[rowIndex * 3 + index]);
+                }
+              },
+              child: Container(
+                width: double.infinity, // Ensure full width
+                height: 100,
+
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Image.asset(
+                      filteredItems[rowIndex * 3 + index]["icon"],
+                      color: Colors.cyan[600],
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      filteredItems[rowIndex * 3 + index]["title"],
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,7 +169,7 @@ class _MySpecialitiesState extends State<MySpecialities> {
           Container(
             width: double.infinity,
             height: 200,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: NetworkImage(// change with api image
                     "https://via.placeholder.com/600x200"), // Replace with your image
@@ -124,44 +191,11 @@ class _MySpecialitiesState extends State<MySpecialities> {
               ),
             ),
           ),
-
-          // GridView (Scrollable)
-          Expanded(
-            child: GridView.builder(
-              padding: EdgeInsets.all(10),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, // 3 columns
-                crossAxisSpacing: 3, // Space between columns
-                mainAxisSpacing: 3, // Space between rows
-                childAspectRatio: 1,
-              ),
-              itemCount: filteredItems.length,
-              itemBuilder: (context, index) {
-                var item = filteredItems[index];
-
-                return InkWell(
-                  onTap: () => _handleTap(context, item),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 0.2),
-                      borderRadius: BorderRadius.circular(
-                          8), // ✅ Rounded corners // Full borders
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(item["icon"], size: 40, color: Colors.blue),
-                        // SizedBox(height: 8),
-                        Text(item["title"],
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          buildRow(0, context),
+          buildDivider(),
+          buildRow(1, context),
+          buildDivider(),
+          buildRow(1, context),
         ],
       ),
     );

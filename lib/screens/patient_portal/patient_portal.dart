@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:meditrina_01/screens/drawers/drawer.dart';
 import 'package:meditrina_01/screens/patient_portal/verify_otp.dart';
 import 'package:meditrina_01/util/api_service.dart';
 
@@ -60,22 +61,27 @@ class _PatientPortalState extends State<PatientPortal> {
       isLoading = true;
     });
 
-    bool success =
+    final response =
         await apiService.verifyOtp(phoneController.text.trim(), otpValue);
+    print(response?.toJson().toString());
 
-    if (success) {
-      showSnackbar("OTP Verified! Navigating...");
-      Navigator.push(
+    if (response != null) {
+      // showSnackbar("OTP Verified! Navigating...");
+      Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => VerifyOtp()),
+        MaterialPageRoute(
+          builder: (context) => VerifyOtp(patientInfo: response),
+        ),
       );
     } else {
       showSnackbar("Invalid OTP. Please try again.");
 
       // Clear OTP fields when wrong OTP is entered
-      setState(() {
-        otpValue = "";
-      });
+      setState(
+        () {
+          otpValue = "";
+        },
+      );
     }
 
     setState(() {
@@ -123,6 +129,7 @@ class _PatientPortalState extends State<PatientPortal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("OTP Verification")),
+      drawer: const MyDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

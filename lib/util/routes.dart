@@ -22,5 +22,6 @@ class MyRoutes {
 
   static String ambulance = "/ambulance";
   static String book_appointment = "/book_appointment";
+  static String online_pathalogy = "/online_pathalogy";
   static String doctor_info = "/doctor_info";
 }

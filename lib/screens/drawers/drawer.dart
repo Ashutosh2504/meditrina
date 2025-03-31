@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meditrina_01/screens/contact_us/contact_us.dart';
 import 'package:meditrina_01/screens/patient_portal/patient_portal.dart';
+import 'package:meditrina_01/util/routes.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -41,7 +42,15 @@ class _MyDrawerState extends State<MyDrawer> {
         padding: EdgeInsets.zero,
         children: [
           const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.blue),
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                    "assets/images/navv.jpg"), // Replace with your image path
+                fit: BoxFit
+                    .cover, // Ensures the image covers the entire background
+              ),
+              color: Colors.blue,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -93,7 +102,9 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           // 🏠 Home Section
           _buildSectionHeader("Services"),
-          _buildDrawerItem(Icons.dashboard, "Online Pathalogy", () {}),
+          _buildDrawerItem(Icons.dashboard, "Online Pathalogy", () {
+            Navigator.pushReplacementNamed(context, MyRoutes.online_pathalogy);
+          }),
           _buildDrawerItem(Icons.notifications, "Service Providers", () {}),
           _buildDrawerItem(Icons.notifications, "Homecare Assistance", () {}),
           _buildDrawerItem(Icons.notifications, "Homecare Assistance", () {}),

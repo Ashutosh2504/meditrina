@@ -22,42 +22,43 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer? _timer;
 
   final List<String> _imageUrls = [
-    "assets/images/img1.jpg",
-    "assets/images/img1.jpg",
-    "assets/images/img1.jpg",
-    "assets/images/img1.jpg"
+    "assets/images/top_image.jpg",
+    "assets/images/dr1.jpeg",
+    "assets/images/dr1.jpeg",
+    "assets/images/dr1.jpeg",
   ];
 
   final List<Map<String, dynamic>> gridItems = [
     {
       "title": "Our Specialities",
-      "icon": Icons.local_hospital,
+      "icon": "assets/images/speciality.png",
       "screen": MySpecialities()
     },
     {
       "title": "Call Hospital",
-      "icon": Icons.local_taxi,
+      "icon": "assets/images/dd5.png",
       "phone": "102"
     }, // Opens dialer
     {
       "title": "Call Ambulance",
-      "icon": Icons.local_pharmacy,
+      "icon": "assets/images/q18.png",
+
       // "screen": ScreenThree()
     },
     {
       "title": "Find a Doctor",
-      "icon": Icons.science,
+      "icon": "assets/images/dd3.png",
       "screen": MyDoctor(),
     },
 
     {
       "title": "Facebook",
-      "icon": Icons.calendar_today,
+      "icon": "assets/images/dd7.png",
       "url": "https://www.appointments.com"
     }, // Opens WebView
     {
       "title": "Twitter",
-      "icon": Icons.transfer_within_a_station,
+      "icon": "assets/images/twitter.png",
       "url": "https://www.appointments.com"
     }, // Opens WebView
   ];
@@ -117,6 +118,95 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  Widget buildRow(int rowIndex, BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(3, (index) {
+        return Container(
+          width: queryData.size.width / 3,
+          height: queryData.size.height / 8, // Fixed width
+          decoration: BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                color: index == 0 ? Colors.transparent : Colors.black,
+                width: index == 0 ? 0 : 0.5, // Vertical separation
+              ),
+            ),
+          ),
+          alignment: Alignment.center,
+          // padding: EdgeInsets.all(8), // Reduce padding to fit content
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: () {
+                if (rowIndex == 0) {
+                  _handleTap(context, gridItems[index]);
+                } else {
+                  _handleTap(context, gridItems[rowIndex * 3 + index]);
+                }
+              },
+              child: Container(
+                width: double.infinity, // Ensure full width
+                height: 100,
+
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Image.asset(
+                      gridItems[rowIndex * 3 + index]["icon"],
+                      color: Colors.cyan[600],
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      gridItems[rowIndex * 3 + index]["title"],
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+//just now commented
+  // Widget buildRow(int rowIndex) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: List.generate(3, (index) {
+  //       return Container(
+  //         width: 100, // Fixed width to avoid overflow
+  //         decoration: BoxDecoration(
+  //           border: Border(
+  //             // top: BorderSide(color: Colors.black, width: 2),
+  //             // bottom: BorderSide(color: Colors.black, width: 2),
+  //             left: BorderSide(
+  //                 color: index == 0 ? Colors.transparent : Colors.black,
+  //                 width: index == 0 ? 0 : 0.5), // Vertical separation
+  //           ),
+  //         ),
+  //         alignment: Alignment.center,
+  //         padding: EdgeInsets.all(16),
+  //         child: Text(
+  //           items[rowIndex * 3 + index],
+  //           style: TextStyle(fontSize: 18),
+  //         ),
+  //       );
+  //     }),
+  //   );
+  // }
+
+  Widget buildDivider() {
+    return Container(
+      height: 0.5,
+      color: Colors.black,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,119 +263,72 @@ class _MyHomePageState extends State<MyHomePage> {
             Center(
               child: SizedBox(
                 height: 50, // Adjust height as needed
-                child: Marquee(
-                  text: 'Meditrina Institute Of Medical Sciences... 🚀',
-                  style: const TextStyle(
-                      color: Colors.blueAccent,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                  scrollAxis: Axis.horizontal,
-                  blankSpace: 50.0, // Space between loops
-                  velocity: 50.0, // Speed of movement
-                  pauseAfterRound: Duration(seconds: 1), // Pause between rounds
-                  startPadding: 10.0, // Padding before start
-                  accelerationDuration: Duration(seconds: 1), // Smooth start
-                  decelerationDuration:
-                      Duration(milliseconds: 500), // Smooth stop
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 270,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, // 3 columns
-                    crossAxisSpacing: 3, // Space between columns
-                    mainAxisSpacing: 3, // Space between rows
-                    childAspectRatio: 1,
+                child: Row(children: [
+                  // Image.asset(
+                  //   'assets/images/new.gif', // Adjust the path to your asset folder
+                  //   width: 60,
+                  //   height: 60,
+                  //   fit: BoxFit.cover,
+                  // ),
+                  Expanded(
+                    child: Marquee(
+                      text: 'Meditrina Institute Of Medical Sciences... 🚀',
+                      style: const TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                      scrollAxis: Axis.horizontal,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+
+                      blankSpace: 50.0, // Space between loops
+                      velocity: 50.0, // Speed of movement
+                      pauseAfterRound:
+                          Duration(seconds: 1), // Pause between rounds
+                      startPadding: 10.0, // Padding before start
+                      accelerationDuration:
+                          Duration(seconds: 1), // Smooth start
+                      decelerationDuration: Duration(milliseconds: 500),
+                      // Smooth stop
+                    ),
                   ),
-                  itemCount: gridItems.length, // 2 rows * 3 columns
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () => _handleTap(context, gridItems[index]),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 0.2),
-                          borderRadius: BorderRadius.circular(
-                              8), // ✅ Rounded corners // Full borders
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(gridItems[index]["icon"],
-                                size: 40, color: Colors.cyan[600]),
-                            SizedBox(height: 4),
-                            Text(gridItems[index]["title"]),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                ]),
               ),
             ),
 
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Container(
-                height: 100,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white, // ✅ Background color (optional)
-                  border:
-                      Border.all(color: Colors.black, width: 0.5), // ✅ Border
-                  borderRadius: BorderRadius.circular(12), // ✅ Rounded corners
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: Colors.black26, // ✅ Soft shadow effect
-                  //     blurRadius: 4,
-                  //     spreadRadius: 1,
-                  //     offset: Offset(2, 2),
-                  //   ),
-                  // ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(Icons.star, size: 40, color: Colors.blue),
-                    SizedBox(height: 4),
-                    Text("Item"),
-                  ],
+            buildRow(0, context),
+            buildDivider(),
+            buildRow(1, context),
+            GestureDetector(
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: SizedBox(
+                  height: 150,
+                  width: double.infinity,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      "assets/images/book_appointment.jpg",
+                      fit: BoxFit.fill,
+                    ),
+                  ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Container(
-                height: 100,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white, // ✅ Background color (optional)
-                  border:
-                      Border.all(color: Colors.black, width: 0.5), // ✅ Border
-                  borderRadius: BorderRadius.circular(12), // ✅ Rounded corners
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: Colors.black26, // ✅ Soft shadow effect
-                  //     blurRadius: 4,
-                  //     spreadRadius: 1,
-                  //     offset: Offset(2, 2),
-                  //   ),
-                  // ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(Icons.star, size: 40, color: Colors.blue),
-                    SizedBox(height: 4),
-                    Text("Item}"),
-                  ],
+            GestureDetector(
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: SizedBox(
+                  height: 150,
+                  width: double.infinity,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      "assets/images/relationship_card.jpg",
+                      fit: BoxFit.fill,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -302,20 +345,20 @@ class _MyHomePageState extends State<MyHomePage> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 4,
-                              spreadRadius: 1,
-                              offset: Offset(2, 2),
-                            ),
-                          ],
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //     color: Colors.black26,
+                          //     blurRadius: 2,
+                          //     spreadRadius: 1,
+                          //     offset: Offset(2, 2),
+                          //   ),
+                          // ],
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.asset(
-                            "assets/images/img1.jpg",
-                            fit: BoxFit.cover,
+                            "assets/images/about.jpg",
+                            fit: BoxFit.fill,
                           ),
                         ),
                       ),
@@ -337,25 +380,26 @@ class _MyHomePageState extends State<MyHomePage> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 4,
-                              spreadRadius: 1,
-                              offset: Offset(2, 2),
-                            ),
-                          ],
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //     color: Colors.black26,
+                          //     blurRadius: 2,
+                          //     spreadRadius: 1,
+                          //     offset: Offset(2, 2),
+                          //   ),
+                          // ],
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.asset(
-                            "assets/images/img1.jpg",
-                            fit: BoxFit.cover,
+                            "assets/images/our_facilities.jpg",
+                            fit: BoxFit.fill,
                           ),
                         ),
                       ),
-                      SizedBox(height: 8), // ✅ Space between image and text
-                      Text(
+                      const SizedBox(
+                          height: 8), // ✅ Space between image and text
+                      const Text(
                         "Our Facilities", // ✅ Change text as needed
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.normal),
@@ -374,7 +418,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 📌 Title/Text at the Top
-                  Text(
+                  const Text(
                     "Meditrina Hospital, 278, Central Bazar Road, Ramdaspeth", // ✅ Change text as needed
                     style: TextStyle(
                         fontSize: 18,
@@ -392,7 +436,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         borderRadius: BorderRadius.circular(
                             12), // ✅ Rounded image corners
                         child: Image.asset(
-                          "assets/images/img1.jpg",
+                          "assets/images/google.jpg",
                           width: double.infinity,
                           height: 200,
                           fit: BoxFit.cover,

@@ -7,7 +7,9 @@ import 'package:meditrina_01/screens/ambulance/my_ambulance.dart';
 import 'package:meditrina_01/screens/book_appointment/book_appointment.dart';
 import 'package:meditrina_01/screens/find_a_doctor/doctor_info.dart';
 import 'package:meditrina_01/screens/home/my_home.dart';
+import 'package:meditrina_01/screens/online_pathalogy/online_pathalogy.dart';
 import 'package:meditrina_01/screens/patient_portal/verify_otp.dart';
+import 'package:meditrina_01/screens/splash_screen/splash_screen.dart';
 import 'package:meditrina_01/util/routes.dart';
 import 'package:meditrina_01/widgets/my_slider.dart';
 
@@ -46,13 +48,23 @@ class MyApp extends StatelessWidget {
                 selectedDepartment: args['departmentName'],
               ),
             );
+          } else if (settings.name == MyRoutes.verify_otp) {
+            final args = settings.arguments as Map<String, dynamic>;
+            return MaterialPageRoute(
+              builder: (context) => VerifyOtp(
+                patientInfo: args['patientInfo'],
+              ),
+            );
           }
           return null;
         },
         routes: {
-          "/": (context) => const MyHomePage(),
+          "/": (context) => MySplashScreen(),
+          // "/": (context) => const MyHomePage(),
+          MyRoutes.homeRoute: (context) => MyHomePage(),
           MyRoutes.ambulance: (context) => MyAmbulance(),
-          MyRoutes.verify_otp: (context) => VerifyOtp(),
+          MyRoutes.online_pathalogy: (context) => OnlinePathalogy(),
+          // MyRoutes.verify_otp: (context) => VerifyOtp(),
           //  MyRoutes.homeRoute: (context) => MyHome(),
         });
   }
