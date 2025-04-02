@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meditrina_01/screens/book_appointment/model_book_appointment.dart';
 import 'package:meditrina_01/util/alerts.dart';
+import 'package:meditrina_01/util/payment_gateway.dart';
 
 class MyBookAppointment extends StatefulWidget {
   final String selectedDoctor;
@@ -66,6 +67,12 @@ class _MyBookAppointmentState extends State<MyBookAppointment> {
         paymentStatus: "paymentStatus",
       );
       await bookAppointment(appointment);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PaymentScreen(
+                    amount: 500,
+                  )));
     }
   }
 

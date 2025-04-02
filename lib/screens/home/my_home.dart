@@ -7,6 +7,7 @@ import 'package:meditrina_01/screens/find_a_doctor/doctor.dart';
 import 'package:meditrina_01/screens/specialities/specialities.dart';
 import 'package:meditrina_01/screens/venue/venue.dart';
 import 'package:meditrina_01/util/routes.dart';
+import 'package:meditrina_01/util/webview.dart';
 import 'package:meditrina_01/widgets/my_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -44,12 +45,11 @@ class _MyHomePageState extends State<MyHomePage> {
     {
       "title": "Call Hospital",
       "icon": "assets/images/dd5.png",
-      "phone": "102"
-    }, // Opens dialer
+    },
     {
       "title": "Call Ambulance",
       "icon": "assets/images/q18.png",
-
+      "phone": "102"
       // "screen": ScreenThree()
     },
     {
@@ -61,16 +61,17 @@ class _MyHomePageState extends State<MyHomePage> {
     {
       "title": "Facebook",
       "icon": "assets/images/dd7.png",
-      "url": "https://www.appointments.com"
+      "url": "https://www.facebook.com/Meditrinainstitutes/"
     }, // Opens WebView
     {
       "title": "Twitter",
       "icon": "assets/images/twitter.png",
-      "url": "https://www.appointments.com"
+      "url": "https://x.com/meditrinaindia"
     }, // Opens WebView
   ];
 
-  void _handleTap(BuildContext context, Map<String, dynamic> item) {
+  Future<void> _handleTap(
+      BuildContext context, Map<String, dynamic> item) async {
     if (item.containsKey("screen")) {
       // Navigate to a new screen
       Navigator.push(
@@ -80,6 +81,15 @@ class _MyHomePageState extends State<MyHomePage> {
     } else if (item.containsKey("phone")) {
       // Open the dialer for the ambulance
       _launchDialer(item["phone"]);
+    } else if (item.containsKey("url")) {
+      // Open the dialer for the ambulance
+
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctxt) =>
+              WebviewComponent(title: item["title"], webviewUrl: item["url"]),
+        ),
+      );
     }
   }
 

@@ -54,12 +54,21 @@ class _VerifyOtpState extends State<VerifyOtp> {
 
   /// Open Report in Browser
   void _openReport(String reportUrl) async {
-    if (await canLaunch(reportUrl)) {
-      await launch(reportUrl);
+    final Uri url = Uri.parse(reportUrl);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
       print("Could not open report: $reportUrl");
     }
   }
+
+  // await Navigator.of(context).push(
+  //                     MaterialPageRoute(
+  //                       builder: (ctxt) => WebviewComponent(
+  //                           title: "Survey",
+  //                           webviewUrl:
+  //                               "https://globalhealth-forum.com/event_app/survey.php?user_id=${user_id}&email_id=${user_email}"),
+  //                     ),
 
   /// **Creates Patient Info Table**
   Widget _buildInfoTable() {

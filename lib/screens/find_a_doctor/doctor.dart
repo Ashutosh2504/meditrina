@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:meditrina_01/screens/find_a_doctor/department_info_screen.dart';
 import 'package:meditrina_01/screens/find_a_doctor/departments_model.dart';
+import 'package:meditrina_01/screens/find_a_doctor/doctor_info.dart';
+import 'package:meditrina_01/screens/find_a_doctor/doctor_list_model.dart';
 import 'package:meditrina_01/util/routes.dart';
 
 class MyDoctor extends StatefulWidget {
@@ -23,11 +25,13 @@ class _MyDoctorState extends State<MyDoctor> {
   int _selectedIndex = 1;
   Dio dio = Dio();
   bool isLoading = true;
+  List<DocModel> doctors = [];
 
   @override
   void initState() {
     super.initState();
     fetchDepartments();
+    fetchDoctors();
   }
 
   Future<void> fetchDepartments() async {
@@ -47,6 +51,25 @@ class _MyDoctorState extends State<MyDoctor> {
       }
     } catch (e) {
       print('Error fetching departments: $e');
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> fetchDoctors() async {
+    try {
+      final response = await dio.get(
+          'https://meditrinainstitute.com/report_software/api/get_all_doctor.php');
+      if (response.statusCode == 200) {
+        final data = response.data;
+        setState(() {
+          doctors = DoctorsListModel.fromJson(data).data;
+          isLoading = false;
+        });
+      } else {
+        throw Exception("Failed to load doctors");
+      }
+    } catch (e) {
+      print("Error fetching doctors: $e");
       setState(() => isLoading = false);
     }
   }
@@ -122,7 +145,7 @@ class _MyDoctorState extends State<MyDoctor> {
           ),
           Expanded(
             child: _selectedIndex == 0
-                ? buildDoctorsGrid()
+                ? buildDoctorsGrid(context)
                 : isLoading
                     ? Center(child: CircularProgressIndicator())
                     : buildDepartmentsList(),
@@ -132,59 +155,91 @@ class _MyDoctorState extends State<MyDoctor> {
     );
   }
 
-  Widget buildDoctorsGrid() {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.75,
-      ),
-      itemCount: 4,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              MyRoutes.doctor_info,
-            );
-          },
-          child: Card(
-            elevation: 4,
-            margin: EdgeInsets.all(8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ClipOval(
-                  child: Image.asset(
-                    "assets/images/AjayBulle.jpg",
-                    width: 80, // Adjust size as needed
-                    height: 100,
-                    fit: BoxFit.contain,
+  Widget buildDoctorsGrid(BuildContext context) {
+    return isLoading
+        ? Center(child: CircularProgressIndicator())
+        : GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.75,
+            ),
+            itemCount: doctors.length,
+            itemBuilder: (context, index) {
+              final doctor = doctors[index];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          DoctorInfoScreen(doctor: doctors[index]),
+                    ),
+                  );
+                },
+                child: Card(
+                  elevation: 4,
+                  margin: EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ClipOval(
+                        child: Image.network(
+                          doctor.docImage,
+                          width: 80,
+                          height: 100,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Icon(Icons.person, size: 80, color: Colors.grey),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Text(
+                          doctor.doctorName,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: color,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      // SizedBox(height: 4),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          doctor.departmentName,
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            MyRoutes.book_appointment,
+                            arguments: {
+                              'doctorName': doctor.doctorName,
+                              'departmentName': doctor.departmentName,
+                            },
+                          );
+                        },
+                        child: Text("Book Appointment",
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, color: color)),
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(height: 8),
-                Text("Doctor Name",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, color: color)),
-                SizedBox(height: 4),
-                Text("Specialization"),
-                SizedBox(height: 8),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      MyRoutes.book_appointment,
-                    );
-                  },
-                  child: Text("Book Appointment",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, color: color)),
-                )
-              ],
-            ),
-          ),
-        );
-      },
-    );
+              );
+            },
+          );
   }
 
   Widget buildDepartmentsList() {
