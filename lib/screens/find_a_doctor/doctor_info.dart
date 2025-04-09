@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:meditrina_01/screens/book_appointment/book_appointment.dart';
 
 import 'package:meditrina_01/screens/find_a_doctor/doctor_list_model.dart'; // Import your model
 
@@ -16,12 +17,7 @@ class DoctorInfoScreen extends StatefulWidget {
 }
 
 class _DoctorInfoScreenState extends State<DoctorInfoScreen> {
-  Color color = const Color.fromARGB(
-    255,
-    8,
-    164,
-    196,
-  );
+  Color color = const Color.fromARGB(255, 8, 164, 196);
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +114,37 @@ class _DoctorInfoScreenState extends State<DoctorInfoScreen> {
                           style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
                       ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Replace below with your actual navigation to BookAppointment screen
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyBookAppointment(
+                                  selectedDepartment:
+                                      widget.doctor.departmentName,
+                                  doctorList: [widget.doctor],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text("Book Appointment",
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: color,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

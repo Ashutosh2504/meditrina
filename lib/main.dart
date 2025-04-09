@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
               settings.arguments as Map<String, dynamic>?; // Handle null case
           return MaterialPageRoute(
             builder: (context) => MyBookAppointment(
-              selectedDoctor: args?['doctorName'] ?? '',
+              doctorList: <DocModel>[],
               selectedDepartment: args?['departmentName'] ?? '',
             ),
           );
@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
         "/": (context) => MySplashScreen(),
         MyRoutes.homeRoute: (context) => MyHomePage(),
         MyRoutes.ambulance: (context) => MyAmbulance(),
-        MyRoutes.online_pathalogy: (context) => OnlinePathalogy(),
+        MyRoutes.online_pathalogy: (context) => MyOnlinePathalogy(),
       },
     );
   }

@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:meditrina_01/screens/find_a_doctor/department_info_screen.dart';
+import 'package:meditrina_01/screens/specialities/specailities_info.dart';
 import 'package:meditrina_01/util/webview.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -11,86 +14,46 @@ class MySpecialities extends StatefulWidget {
 }
 
 class _MySpecialitiesState extends State<MySpecialities> {
-  List<Map<String, dynamic>> gridItems = []; // Stores API Data
-  List<Map<String, dynamic>> filteredItems = [];
+  List<Map<String, dynamic>> departments = []; // Stores API Data
+  List<Map<String, dynamic>> filteredDepartments = [];
   bool isLoading = true; // For loading state
-  Color color = const Color.fromARGB(
-    255,
-    8,
-    164,
-    196,
-  );
+  Color color = const Color.fromARGB(255, 8, 164, 196);
+  Dio dio = Dio();
 
   @override
   void initState() {
     super.initState();
-    fetchGridItems();
+    fetchDepartments();
   }
 
-  Future<void> fetchGridItems() async {
+  Future<void> fetchDepartments() async {
     try {
-      // Simulating API Call (Replace with actual API request)
-      await Future.delayed(Duration(seconds: 1));
-
-      List<Map<String, dynamic>> apiData = [
-        {
-          "title": "Radiology",
-          "icon": "https://via.placeholder.com/80",
-          "screen": ScreenOne()
-        },
-        {
-          "title": "Neurological Surgery",
-          "icon": "https://via.placeholder.com/80",
-          "screen": ScreenTwo()
-        },
-        {
-          "title": "Ambulance",
-          "icon": "https://via.placeholder.com/80",
-          "phone": "102"
-        },
-        {
-          "title": "Pharmacy",
-          "icon": "https://via.placeholder.com/80",
-          "screen": ScreenThree()
-        },
-        {
-          "title": "Lab Tests",
-          "icon": "https://via.placeholder.com/80",
-          "url": "https://www.labtests.com"
-        },
-        {
-          "title": "Appointments",
-          "icon": "https://via.placeholder.com/80",
-          "url": "https://www.appointments.com"
-        },
-        {
-          "title": "Lab Tests",
-          "icon": "https://via.placeholder.com/80",
-          "url": "https://www.labtests.com"
-        },
-        {
-          "title": "Appointments",
-          "icon": "https://via.placeholder.com/80",
-          "url": "https://www.appointments.com"
-        },
-      ];
-
-      setState(() {
-        gridItems = apiData;
-        filteredItems = apiData;
-        isLoading = false; // Data is loaded
-      });
+      final response = await dio.get(
+          'https://meditrinainstitute.com/report_software/api/get_department.php');
+      if (response.statusCode == 200) {
+        setState(() {
+          departments = List<Map<String, dynamic>>.from(
+              response.data["data"].map((dept) => {
+                    'title': dept['department_name'],
+                    'icon': dept['logo_url'], // Fetching network image URL
+                  }));
+          filteredDepartments = departments;
+          isLoading = false;
+        });
+        setState(() {
+          filteredDepartments = departments;
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      print("Error fetching data: $e");
-      setState(() {
-        isLoading = false;
-      });
+      print('Error fetching departments: $e');
+      setState(() => isLoading = false);
     }
   }
 
   void _filterItems(String query) {
     setState(() {
-      filteredItems = gridItems
+      filteredDepartments = departments
           .where((item) =>
               item["title"].toLowerCase().contains(query.toLowerCase()))
           .toList();
@@ -123,70 +86,19 @@ class _MySpecialitiesState extends State<MySpecialities> {
     }
   }
 
-  // Widget buildGrid() {
-  //   if (filteredItems.isEmpty) {
-  //     return Center(child: Text("No items found"));
-  //   }
-
-  //   return GridView.builder(
-  //     shrinkWrap: true,
-  //     physics: NeverScrollableScrollPhysics(),
-  //     itemCount: filteredItems.length,
-  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //       crossAxisCount: 3,
-  //       childAspectRatio: 1.0,
-  //     ),
-  //     itemBuilder: (context, index) {
-  //       final item = filteredItems[index];
-  //       return InkWell(
-  //         onTap: () => _handleTap(context, item),
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(8.0),
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               Image.asset(
-  //                 'assets/images/img1.jpg',
-  //                 width: 60,
-  //                 height: 60,
-  //                 fit: BoxFit.cover,
-  //               ),
-  //               // Image.network(
-  //               //   item["icon"],
-  //               //   width: 60,
-  //               //   height: 60,
-  //               //   errorBuilder: (context, error, stackTrace) => Icon(
-  //               //     Icons.broken_image,
-  //               //     size: 50,
-  //               //     color: Colors.red,
-  //               //   ),
-  //               // ),
-  //               SizedBox(height: 5),
-  //               Text(
-  //                 item["title"],
-  //                 textAlign: TextAlign.center,
-  //                 style: TextStyle(fontSize: 12),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   Widget buildGridWithSeparators() {
-    if (filteredItems.isEmpty) {
+    if (filteredDepartments.isEmpty) {
       return Center(child: Text("No items found"));
     }
 
-    int columnCount =
-        filteredItems.length == 1 ? 1 : (filteredItems.length == 2 ? 2 : 3);
+    int columnCount = filteredDepartments.length == 1
+        ? 1
+        : (filteredDepartments.length == 2 ? 2 : 3);
 
     return Column(
       children: [
         for (int row = 0;
-            row < (filteredItems.length / columnCount).ceil();
+            row < (filteredDepartments.length / columnCount).ceil();
             row++) ...[
           IntrinsicHeight(
             child: Row(
@@ -194,11 +106,11 @@ class _MySpecialitiesState extends State<MySpecialities> {
               children: List.generate(columnCount, (col) {
                 int index = row * columnCount + col;
                 bool isLastRow =
-                    row == (filteredItems.length / columnCount).floor();
+                    row == (filteredDepartments.length / columnCount).floor();
                 bool isLastItemInLastRow =
-                    isLastRow && index == filteredItems.length - 1;
+                    isLastRow && index == filteredDepartments.length - 1;
 
-                if (index >= filteredItems.length) {
+                if (index >= filteredDepartments.length) {
                   return Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -214,7 +126,7 @@ class _MySpecialitiesState extends State<MySpecialities> {
                   );
                 }
 
-                final item = filteredItems[index];
+                final item = filteredDepartments[index];
 
                 return Expanded(
                   child: Container(
@@ -230,7 +142,14 @@ class _MySpecialitiesState extends State<MySpecialities> {
                       ),
                     ),
                     child: InkWell(
-                      onTap: () => _handleTap(context, item),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MySpecialitiesInfo(
+                                      department: filteredDepartments[index],
+                                    )));
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
@@ -286,39 +205,48 @@ class _MySpecialitiesState extends State<MySpecialities> {
           )),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                // Top Image
-                Container(
-                  width: double.infinity,
-                  height: 200,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          "https://via.placeholder.com/600x200"), // Replace with API image
-                      fit: BoxFit.cover,
+          : SafeArea(
+              child: Column(
+                children: [
+                  // Top Image
+                  Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("assets/images/aabbuuss.jpg"),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
 
-                // Search Bar
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: TextField(
-                    onChanged: _filterItems,
-                    decoration: InputDecoration(
-                      hintText: "Search...",
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                  // Everything else scrollable
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          // Search Bar
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: TextField(
+                              onChanged: _filterItems,
+                              decoration: InputDecoration(
+                                hintText: "Search...",
+                                prefixIcon: Icon(Icons.search),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
+                            ),
+                          ),
+
+                          // Grid content
+                          buildGridWithSeparators(),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-
-                Expanded(
-                  child: buildGridWithSeparators(),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }

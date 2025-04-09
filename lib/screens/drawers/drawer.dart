@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meditrina_01/screens/book_appointment/book_appointment.dart';
 import 'package:meditrina_01/screens/contact_us/contact_us.dart';
 import 'package:meditrina_01/screens/home/my_home.dart';
 import 'package:meditrina_01/screens/patient_portal/patient_portal.dart';
@@ -99,13 +100,21 @@ class _MyDrawerState extends State<MyDrawer> {
             },
           ),
           ListTile(
-            leading: Image.asset(
-              "assets/images/dd5.png",
-              height: 20,
-            ),
-            title: Text("Plan Your Visit"),
-            onTap: () {},
-          ),
+              leading: Image.asset(
+                "assets/images/dd5.png",
+                height: 20,
+              ),
+              title: Text("Plan Your Visit"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MyBookAppointment(
+                            selectedDepartment: '',
+                            doctorList: [],
+                          )),
+                );
+              }),
           ListTile(
             leading: Image.asset(
               "assets/images/ankk2.png",
@@ -128,8 +137,8 @@ class _MyDrawerState extends State<MyDrawer> {
               "assets/images/group.png", "Service Providers", () {}),
           _buildDrawerItem(
               "assets/images/user.png", "Homecare Assistance", () {}),
-          _buildDrawerItem(
-              "assets/images/user.png", "Homecare Assistance", () {}),
+          // _buildDrawerItem(
+          //     "assets/images/user.png", "Homecare Assistance", () {}),
           _buildDrawerItem(
               "assets/images/user.png", "Promotions & Packages", () {}),
           _buildDrawerItem("assets/images/user.png", "Medical Tourism", () {}),
@@ -137,7 +146,7 @@ class _MyDrawerState extends State<MyDrawer> {
           _buildDrawerItem("assets/images/user.png", "Patient Rights", () {}),
           _buildDrawerItem("assets/images/user.png", "Health Tips", () {}),
           _buildDrawerItem("assets/images/user.png", "Affiliations", () {}),
-          _buildDrawerItem("assets/images/user.png", "Pay Online", () {}),
+          // _buildDrawerItem("assets/images/user.png", "Pay Online", () {}),
           _buildDrawerItem("assets/images/user.png", "Feedback Form", () {}),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:meditrina_01/screens/book_appointment/book_appointment.dart';
 import 'package:meditrina_01/screens/find_a_doctor/department_info_screen.dart';
 import 'package:meditrina_01/screens/find_a_doctor/departments_model.dart';
 import 'package:meditrina_01/screens/find_a_doctor/doctor_info.dart';
@@ -221,13 +222,14 @@ class _MyDoctorState extends State<MyDoctor> {
                       SizedBox(height: 8),
                       TextButton(
                         onPressed: () {
-                          Navigator.pushNamed(
+                          Navigator.push(
                             context,
-                            MyRoutes.book_appointment,
-                            arguments: {
-                              'doctorName': doctor.doctorName,
-                              'departmentName': doctor.departmentName,
-                            },
+                            MaterialPageRoute(
+                              builder: (context) => MyBookAppointment(
+                                selectedDepartment: doctor.departmentName,
+                                doctorList: [doctor],
+                              ),
+                            ),
                           );
                         },
                         child: Text("Book Appointment",

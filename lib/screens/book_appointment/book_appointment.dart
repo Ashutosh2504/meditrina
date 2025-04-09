@@ -2,16 +2,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meditrina_01/screens/book_appointment/model_book_appointment.dart';
+import 'package:meditrina_01/screens/find_a_doctor/doctor_list_model.dart';
 import 'package:meditrina_01/util/alerts.dart';
 import 'package:meditrina_01/util/payment_gateway.dart';
 
 class MyBookAppointment extends StatefulWidget {
-  final String selectedDoctor;
+  final List<DocModel> doctorList;
   final String selectedDepartment;
 
   const MyBookAppointment({
     Key? key,
-    required this.selectedDoctor,
+    required this.doctorList,
     required this.selectedDepartment,
   }) : super(key: key);
 
@@ -29,8 +30,7 @@ class _MyBookAppointmentState extends State<MyBookAppointment> {
   String homeAddress = '';
   DateTime? appointmentDate;
   TimeOfDay? appointmentTime;
-  TextEditingController doctorController = TextEditingController();
-  TextEditingController departmentController = TextEditingController();
+  String? selectedDoctorName;
 
   Dio dio = Dio();
   Color color = const Color.fromARGB(255, 8, 164, 196);
@@ -38,21 +38,16 @@ class _MyBookAppointmentState extends State<MyBookAppointment> {
   @override
   void initState() {
     super.initState();
-    doctorController.text = widget.selectedDoctor;
-    departmentController.text = widget.selectedDepartment;
-  }
-
-  @override
-  void dispose() {
-    doctorController.dispose();
-    departmentController.dispose();
-    super.dispose();
+    if (widget.doctorList.length == 1) {
+      selectedDoctorName = widget.doctorList.first.doctorName;
+    }
   }
 
   void submitForm() async {
     if (_formKey.currentState!.validate() &&
         appointmentDate != null &&
-        appointmentTime != null) {
+        appointmentTime != null &&
+        selectedDoctorName != null) {
       _formKey.currentState!.save();
       final appointment = BookAppointmentModel(
         name: name,
@@ -60,19 +55,23 @@ class _MyBookAppointmentState extends State<MyBookAppointment> {
         email: email,
         address: homeAddress,
         appointmentDate: appointmentDate.toString(),
-        department: departmentController.text.trim(),
-        doctor: doctorController.text.trim(),
+        department: widget.selectedDepartment.trim(),
+        doctor: selectedDoctorName!.trim(),
         currentDates: DateFormat('dd-MM-yyyy').format(DateTime.now()),
         fees: "fees",
         paymentStatus: "paymentStatus",
       );
       await bookAppointment(appointment);
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PaymentScreen(
-                    amount: 500,
-                  )));
+        context,
+        MaterialPageRoute(
+          builder: (context) => PaymentScreen(amount: 500),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please fill all required fields.")),
+      );
     }
   }
 
@@ -90,14 +89,12 @@ class _MyBookAppointmentState extends State<MyBookAppointment> {
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text("Failed to book appointment: ${response.statusCode}")),
+          SnackBar(content: Text("Failed: ${response.statusCode}")),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error occurred: $e")),
+        SnackBar(content: Text("Error: $e")),
       );
     } finally {
       setState(() => isLoading = false);
@@ -139,100 +136,65 @@ class _MyBookAppointmentState extends State<MyBookAppointment> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: "Name*",
-                  labelStyle:
-                      TextStyle(color: color), // Set the label color to blue
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: color), // Set the border color to blue
-                    borderRadius: BorderRadius.circular(
-                        10), // Optional: Add rounded corners
-                  ),
-                  prefixIcon: Icon(
-                    Icons.person, // Set the icon of your choice
-                    color: color, // Set the icon color
+              Center(
+                child: Image.asset(
+                  "assets/images/kk.jpg",
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              SizedBox(height: 10),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(fontSize: 12, color: color),
+                      children: [
+                        TextSpan(text: "Book an "),
+                        TextSpan(
+                            text: "Appointment",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        TextSpan(text: " and "),
+                        TextSpan(
+                            text: "Experience Quality",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        TextSpan(text: " with us."),
+                      ],
+                    ),
                   ),
                 ),
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                decoration: _buildInputDecoration("Name*", Icons.person),
                 validator: (value) => value!.isEmpty ? 'Enter your name' : null,
                 onSaved: (value) => name = value!,
               ),
-              SizedBox(
-                height: 15,
-              ),
+              SizedBox(height: 15),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: "Contact Number*",
-                  labelStyle:
-                      TextStyle(color: color), // Set the label color to blue
-                  // border: OutlineInputBorder(), // Remove the default border
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: color), // Set the border color to blue
-                    borderRadius: BorderRadius.circular(
-                        10), // Optional: Add rounded corners
-                  ),
-                  prefixIcon: Icon(
-                    Icons.call, // Set the icon of your choice
-                    color: color, // Set the icon color
-                  ),
-                ),
+                decoration:
+                    _buildInputDecoration("Contact Number*", Icons.call),
                 keyboardType: TextInputType.phone,
                 validator: (value) =>
                     value!.length != 10 ? 'Enter valid number' : null,
                 onSaved: (value) => contactNumber = value!,
               ),
-              SizedBox(
-                height: 15,
-              ),
+              SizedBox(height: 15),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: "Email*",
-                  labelStyle:
-                      TextStyle(color: color), // Set the label color to blue
-                  // Remove the default border
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: color), // Set the border color to blue
-                    borderRadius: BorderRadius.circular(
-                        10), // Optional: Add rounded corners
-                  ),
-                  prefixIcon: Icon(
-                    Icons.mail, // Set the icon of your choice
-                    color: color, // Set the icon color
-                  ),
-                ),
+                decoration: _buildInputDecoration("Email*", Icons.mail),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) =>
                     value!.contains('@') ? null : 'Enter a valid email',
                 onSaved: (value) => email = value!,
               ),
-              SizedBox(
-                height: 15,
-              ),
+              SizedBox(height: 15),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: "Home Address*",
-                  labelStyle:
-                      TextStyle(color: color), // Set the label color to blue
-                  // border: OutlineInputBorder(), // Remove the default border
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: color), // Set the border color to blue
-                    borderRadius: BorderRadius.circular(
-                        10), // Optional: Add rounded corners
-                  ),
-                  prefixIcon: Icon(
-                    Icons.home, // Set the icon of your choice
-                    color: color, // Set the icon color
-                  ),
-                ),
+                decoration: _buildInputDecoration("Home Address*", Icons.home),
                 onSaved: (value) => homeAddress = value!,
               ),
-              SizedBox(
-                height: 15,
-              ),
+              SizedBox(height: 15),
               ListTile(
                 title: Text(
                   appointmentDate != null
@@ -240,14 +202,8 @@ class _MyBookAppointmentState extends State<MyBookAppointment> {
                       : 'Select Date*',
                   style: TextStyle(color: color),
                 ),
-                trailing: Icon(
-                  Icons.calendar_today,
-                  color: color,
-                ),
+                trailing: Icon(Icons.calendar_today, color: color),
                 onTap: pickDate,
-              ),
-              SizedBox(
-                height: 15,
               ),
               ListTile(
                 title: Text(
@@ -256,69 +212,50 @@ class _MyBookAppointmentState extends State<MyBookAppointment> {
                       : 'Select Time*',
                   style: TextStyle(color: color),
                 ),
-                trailing: Icon(
-                  Icons.access_time,
-                  color: color,
-                ),
+                trailing: Icon(Icons.access_time, color: color),
                 onTap: pickTime,
               ),
+              SizedBox(height: 15),
               SizedBox(
-                height: 15,
+                height: 10,
               ),
+              if (widget.doctorList.isEmpty)
+                TextFormField(
+                  decoration:
+                      _buildInputDecoration("Doctor Name*", Icons.person_pin),
+                  validator: (value) =>
+                      value!.isEmpty ? 'Enter doctor name' : null,
+                  onSaved: (value) => selectedDoctorName = value!,
+                )
+              else ...[
+                Text("Select Doctor*",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, color: color)),
+                const SizedBox(height: 4),
+                ...widget.doctorList.map((doc) => RadioListTile<String>(
+                      title: Text(doc.doctorName),
+                      value: doc.doctorName,
+                      groupValue: selectedDoctorName,
+                      activeColor: Colors.black,
+                      onChanged: (value) {
+                        setState(() => selectedDoctorName = value);
+                      },
+                    )),
+              ],
+              SizedBox(height: 15),
               TextFormField(
-                controller: doctorController,
-                decoration: InputDecoration(
-                  labelText: "Doctor*",
-                  labelStyle:
-                      TextStyle(color: color), // Set the label color to blue
-                  // border: OutlineInputBorder(), // Remove the default border
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: color), // Set the border color to blue
-                    borderRadius: BorderRadius.circular(
-                        10), // Optional: Add rounded corners
-                  ),
-                  prefixIcon: Icon(
-                    Icons.person_3_rounded, // Set the icon of your choice
-                    color: color, // Set the icon color
-                  ),
-                ),
-                validator: (value) =>
-                    value!.isEmpty ? 'Enter doctor name' : null,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              TextFormField(
-                controller: departmentController,
-                decoration: InputDecoration(
-                  labelText: "Department*",
-                  labelStyle:
-                      TextStyle(color: color), // Set the label color to blue
-                  // border: OutlineInputBorder(), // Remove the default border
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: color), // Set the border color to blue
-                    borderRadius: BorderRadius.circular(
-                        10), // Optional: Add rounded corners
-                  ),
-                  prefixIcon: Icon(
-                    Icons.medical_information, // Set the icon of your choice
-                    color: color, // Set the icon color
-                  ),
-                ),
-                validator: (value) =>
-                    value!.isEmpty ? 'Enter department' : null,
+                initialValue: widget.selectedDepartment,
+                readOnly: true,
+                decoration: _buildInputDecoration(
+                    "Department*", Icons.medical_information),
               ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: isLoading ? null : submitForm,
                 child: isLoading
                     ? CircularProgressIndicator(color: Colors.white)
-                    : Text(
-                        'Submit Appointment',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
+                    : Text('Submit Appointment',
+                        style: TextStyle(color: Colors.white, fontSize: 18)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: color,
                   shape: RoundedRectangleBorder(
@@ -330,6 +267,18 @@ class _MyBookAppointmentState extends State<MyBookAppointment> {
           ),
         ),
       ),
+    );
+  }
+
+  InputDecoration _buildInputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: color),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: color),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      prefixIcon: Icon(icon, color: color),
     );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:meditrina_01/screens/find_a_doctor/departments_model.dart';
-import 'package:meditrina_01/screens/find_a_doctor/dept_doc_model.dart';
+import 'package:meditrina_01/screens/book_appointment/book_appointment.dart';
+import 'package:meditrina_01/screens/find_a_doctor/dept_doc_model.dart'; // this should define DocModel
+import 'package:meditrina_01/screens/find_a_doctor/doctor_list_model.dart';
 import 'package:meditrina_01/util/routes.dart';
 
 class DepartmentInfoScreen extends StatefulWidget {
@@ -16,14 +17,10 @@ class DepartmentInfoScreen extends StatefulWidget {
 class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
   Dio dio = Dio();
   bool isLoading = true;
-  Color color = const Color.fromARGB(
-    255,
-    8,
-    164,
-    196,
-  );
+  Color color = const Color.fromARGB(255, 8, 164, 196);
   String departmentContent = "";
-  Future<List<DepartmentDoctors>>? _doctorsFuture;
+  Future<List<DocModel>>? _doctorsFuture;
+
   @override
   void initState() {
     super.initState();
@@ -52,8 +49,7 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
     }
   }
 
-  Future<List<DepartmentDoctors>> fetchDepartmentDoctors(
-      String department) async {
+  Future<List<DocModel>> fetchDepartmentDoctors(String department) async {
     try {
       var response = await Dio().get(
         "https://meditrinainstitute.com/report_software/api/get_doctor.php",
@@ -61,16 +57,31 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Directly use the JSON map instead of converting from a string
-        DepartmentDoctorsModel doctorsModel =
-            DepartmentDoctorsModel.fromJson(response.data);
-        return doctorsModel.data;
+        DoctorsListModel doctorsModel =
+            DoctorsListModel.fromJson(response.data);
+        return doctorsModel.data; // List<DocModel>
       } else {
         throw Exception("Failed to load doctors");
       }
     } catch (e) {
       throw Exception("Error fetching doctors: $e");
     }
+  }
+
+  List<DocModel> convertToDocModelList(List<DepartmentDoctors>? doctors) {
+    return (doctors ?? [])
+        .map((e) => DocModel(
+              docId: e.docId,
+              doctorName: e.doctorName,
+              mobile: e.mobile,
+              email: e.email,
+              education: e.education,
+              speciality: e.speciality,
+              departmentName: e.departmentName,
+              docImage: e.docImage,
+              date: e.date,
+            ))
+        .toList();
   }
 
   @override
@@ -91,7 +102,7 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FutureBuilder<List<DepartmentDoctors>>(
+                    FutureBuilder<List<DocModel>>(
                       future: _doctorsFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -105,7 +116,7 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                           return Center(child: Text("No doctors available"));
                         }
 
-                        List<DepartmentDoctors> doctors = snapshot.data!;
+                        List<DocModel> doctors = snapshot.data!;
 
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,21 +124,21 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                           children: [
                             ListView.builder(
                               itemCount: doctors.length,
-                              shrinkWrap:
-                                  true, // ✅ Ensures ListView takes only needed space
-                              physics:
-                                  NeverScrollableScrollPhysics(), // ✅ Disables ListView's scrolling
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 final doctor = doctors[index];
                                 return InkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(
+                                    Navigator.push(
                                       context,
-                                      MyRoutes.book_appointment,
-                                      arguments: {
-                                        'doctorName': doctor.doctorName,
-                                        'departmentName': doctor.departmentName,
-                                      },
+                                      MaterialPageRoute(
+                                        builder: (context) => MyBookAppointment(
+                                          doctorList: [doctors[index]],
+                                          selectedDepartment:
+                                              widget.departmentName,
+                                        ),
+                                      ),
                                     );
                                   },
                                   child: Card(
@@ -142,8 +153,6 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
                                         children: [
                                           ClipRRect(
                                             borderRadius:
@@ -163,8 +172,6 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
                                               children: [
                                                 Text(
                                                   doctor.doctorName,
@@ -201,14 +208,13 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                         );
                       },
                     ),
+                    SizedBox(height: 20),
                     Text(
                       "${widget.departmentName}:",
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 10),
                     Text(
