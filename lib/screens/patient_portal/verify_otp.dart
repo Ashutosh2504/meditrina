@@ -1,8 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:meditrina_01/screens/drawers/drawer.dart';
 import 'package:meditrina_01/screens/patient_portal/patient_info.dart';
 import 'package:http/http.dart' as http;
+import 'package:meditrina_01/screens/patient_portal/patient_portal.dart';
+import 'package:meditrina_01/util/routes.dart';
+import 'package:meditrina_01/util/secure_storage_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class VerifyOtp extends StatefulWidget {
@@ -153,18 +157,98 @@ class _VerifyOtpState extends State<VerifyOtp> {
     );
   }
 
+  void _showLogoutConfirmation() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Do you really want to logout?'),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text('Logout'),
+              onPressed: () async {
+                final storage = SecureStorageService();
+                await storage.clearPhone();
+                await storage.deleteSecureData("patientInfo");
+ // 👈 clear stored login info
+
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  MyRoutes.homeRoute,
+                  (route) => false,
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<String> tests = widget.patientInfo.testPrescribed.split('|');
 
     return Scaffold(
+      drawer: MyDrawer(),
+      // appBar: AppBar(
+      //   title: const Text(
+      //     'Patient Portal',
+      //     style: TextStyle(fontSize: 22, fontWeight: FontWeight.normal),
+      //   ),
+      //   centerTitle: true,
+      // ),
       appBar: AppBar(
         title: const Text(
           'Patient Portal',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.normal),
         ),
         centerTitle: true,
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (String value) {
+              if (value == 'logout') {
+                _showLogoutConfirmation();
+              }
+            },
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem<String>(
+                value: 'logout',
+                child: Center(
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: const Text(
+                      'Logout',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

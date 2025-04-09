@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:meditrina_01/screens/drawers/drawer.dart';
 import 'package:meditrina_01/screens/find_a_doctor/doctor.dart';
+import 'package:meditrina_01/screens/our_facilities/our_facilities.dart';
 import 'package:meditrina_01/screens/specialities/specialities.dart';
 import 'package:meditrina_01/screens/venue/venue.dart';
 import 'package:meditrina_01/util/routes.dart';
@@ -45,11 +46,12 @@ class _MyHomePageState extends State<MyHomePage> {
     {
       "title": "Call Hospital",
       "icon": "assets/images/dd5.png",
+      "phone": "07126669666"
     },
     {
       "title": "Call Ambulance",
       "icon": "assets/images/q18.png",
-      "phone": "102"
+      "phone": "07126669612"
       // "screen": ScreenThree()
     },
     {
@@ -407,41 +409,51 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
 
                   // 🖼️ Second Image Container with Text
-                  Column(
-                    children: [
-                      Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     color: Colors.black26,
-                          //     blurRadius: 2,
-                          //     spreadRadius: 1,
-                          //     offset: Offset(2, 2),
-                          //   ),
-                          // ],
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OurFacilitiesScreen(),
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            "assets/images/our_facilities.jpg",
-                            fit: BoxFit.fill,
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //     color: Colors.black26,
+                            //     blurRadius: 2,
+                            //     spreadRadius: 1,
+                            //     offset: Offset(2, 2),
+                            //   ),
+                            // ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              "assets/images/our_facilities.jpg",
+                              fit: BoxFit.fill,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                          height: 8), // ✅ Space between image and text
-                      Text(
-                        "Our Facilities", // ✅ Change text as needed
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            color: color),
-                      ),
-                    ],
+                        const SizedBox(
+                            height: 8), // ✅ Space between image and text
+                        Text(
+                          "Our Facilities", // ✅ Change text as needed
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              color: color),
+                        ),
+                      ],
+                    ),
                   ),
                 ]),
             Container(

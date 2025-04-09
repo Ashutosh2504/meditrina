@@ -7,17 +7,28 @@ import 'package:meditrina_01/screens/find_a_doctor/doctor_info.dart';
 import 'package:meditrina_01/screens/find_a_doctor/doctor_list_model.dart';
 import 'package:meditrina_01/screens/home/my_home.dart';
 import 'package:meditrina_01/screens/online_pathalogy/online_pathalogy.dart';
+import 'package:meditrina_01/screens/patient_portal/patient_portal.dart';
 import 'package:meditrina_01/screens/patient_portal/verify_otp.dart';
+import 'package:meditrina_01/screens/patients_rights/patients_right.dart';
+import 'package:meditrina_01/screens/service_providers/service_providers.dart';
 import 'package:meditrina_01/screens/splash_screen/splash_screen.dart';
 import 'package:meditrina_01/util/routes.dart';
+import 'package:meditrina_01/util/secure_storage_service.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final storage = SecureStorageService();
+  final phone = await storage.getPhone();
+
+  runApp(MyApp(initialPhone: phone));
+  // runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String? initialPhone;
+  // const MyApp({super.key});
 
+  MyApp({required this.initialPhone});
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -62,6 +73,10 @@ class MyApp extends StatelessWidget {
         MyRoutes.homeRoute: (context) => MyHomePage(),
         MyRoutes.ambulance: (context) => MyAmbulance(),
         MyRoutes.online_pathalogy: (context) => MyOnlinePathalogy(),
+        MyRoutes.service_providers: (context) => ServiceProviders(),
+        MyRoutes.patients_portal: (context) => PatientPortal(),
+        MyRoutes.patients_rights: (context) => PatientRightsScreen(),
+       
       },
     );
   }

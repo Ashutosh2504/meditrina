@@ -251,22 +251,3 @@ class _MySpecialitiesState extends State<MySpecialities> {
     );
   }
 }
-
-// Dummy Screens for Navigation
-class ScreenOne extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) =>
-      Scaffold(appBar: AppBar(title: Text("Radiology")));
-}
-
-class ScreenTwo extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) =>
-      Scaffold(appBar: AppBar(title: Text("Neurological Surgery")));
-}
-
-class ScreenThree extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) =>
-      Scaffold(appBar: AppBar(title: Text("Pharmacy")));
-}

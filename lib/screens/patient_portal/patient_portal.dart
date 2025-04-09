@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:meditrina_01/screens/drawers/drawer.dart';
+import 'package:meditrina_01/screens/patient_portal/patient_info.dart';
 import 'package:meditrina_01/screens/patient_portal/verify_otp.dart';
 import 'package:meditrina_01/util/api_service.dart';
+import 'package:meditrina_01/util/secure_storage_service.dart';
 
 class PatientPortal extends StatefulWidget {
   PatientPortal({super.key});
@@ -15,12 +18,7 @@ class PatientPortal extends StatefulWidget {
 
 class _PatientPortalState extends State<PatientPortal> {
   final TextEditingController phoneController = TextEditingController();
-  Color color = const Color.fromARGB(
-    255,
-    8,
-    164,
-    196,
-  );
+  Color color = const Color.fromARGB(255, 8, 164, 196);
   String otpValue = "";
   String buttonText = "Get OTP";
   bool isOtpFieldVisible = false;
@@ -36,7 +34,6 @@ class _PatientPortalState extends State<PatientPortal> {
       showSnackbar("Enter a valid 10-digit number");
       return;
     }
-
     setState(() {
       isLoading = true;
     });
@@ -73,6 +70,24 @@ class _PatientPortalState extends State<PatientPortal> {
 
     if (response != null) {
       // showSnackbar("OTP Verified! Navigating...");
+      final storage = SecureStorageService();
+      await storage.savePhone(phoneController.text.trim());
+      final patientInfo = PatientInfo(
+        id: response.id,
+        fullName: response.fullName,
+        mobileNumber: response.mobileNumber,
+        age: response.age,
+        gender: response.gender,
+        consultingDoctor: response.consultingDoctor,
+        testPrescribed: response.testPrescribed,
+        otp: response.otp,
+        date: response.date,
+        masterId: response.masterId,
+      );
+      // Convert to JSON string
+      final String patientJson = jsonEncode(patientInfo.toJson());
+
+      await storage.savePatientInfo(patientInfo);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

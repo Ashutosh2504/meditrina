@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:meditrina_01/screens/home/my_home.dart';
+import 'package:meditrina_01/util/routes.dart';
+import 'package:meditrina_01/util/secure_storage_service.dart';
 
 class MySplashScreen extends StatefulWidget {
   const MySplashScreen({super.key});
@@ -17,7 +19,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
   void initState() {
     super.initState();
 
-    Timer(Duration(seconds: 3), () {
+    Timer(Duration(seconds: 2), () {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -25,6 +27,35 @@ class _MySplashScreenState extends State<MySplashScreen> {
           ));
     });
   }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _checkLoginStatus();
+  // }
+
+  // Future<void> _checkLoginStatus() async {
+  //   final storage = SecureStorageService();
+  //   final phone = await storage.getPhone();
+
+  //   if (phone != null) {
+  //     Timer(Duration(seconds: 3), () {
+  //       Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (context) => MyHomePage(),
+  //           ));
+  //     });
+  //   } else {
+  //     // Navigator.pushReplacementNamed(context, MyRoutes.homeRoute);
+  //     Timer(Duration(seconds: 3), () {
+  //       Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (context) => MyHomePage(),
+  //           ));
+  //     }); // or login
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
