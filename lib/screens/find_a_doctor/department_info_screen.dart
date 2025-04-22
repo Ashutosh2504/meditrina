@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:meditrina_01/screens/book_appointment/book_appointment.dart';
 import 'package:meditrina_01/screens/find_a_doctor/dept_doc_model.dart'; // this should define DocModel
+import 'package:meditrina_01/screens/find_a_doctor/doctor_info.dart';
 import 'package:meditrina_01/screens/find_a_doctor/doctor_list_model.dart';
 import 'package:meditrina_01/util/routes.dart';
 
@@ -133,10 +134,8 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => MyBookAppointment(
-                                          doctorList: [doctors[index]],
-                                          selectedDepartment:
-                                              widget.departmentName,
+                                        builder: (context) => DoctorInfoScreen(
+                                          doctor: doctor,
                                         ),
                                       ),
                                     );

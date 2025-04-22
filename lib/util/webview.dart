@@ -12,6 +12,12 @@ class WebviewComponent extends StatefulWidget {
 }
 
 class _WebviewComponentState extends State<WebviewComponent> {
+  Color color = const Color.fromARGB(
+    255,
+    8,
+    164,
+    196,
+  );
   WebViewController controller = WebViewController();
 
   @override
@@ -50,7 +56,11 @@ class _WebviewComponentState extends State<WebviewComponent> {
 
   PreferredSizeWidget getAppBar() {
     return AppBar(
-      title: Text(widget.title),
+      backgroundColor: color,
+      title: Text(
+        widget.title,
+        style: TextStyle(color: Colors.white),
+      ),
     );
   }
 

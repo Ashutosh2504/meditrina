@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:meditrina_01/screens/drawers/drawer.dart';
+import 'package:meditrina_01/screens/home/my_home.dart';
 import 'package:meditrina_01/screens/online_pathalogy/online_pathalogy_model.dart';
 import 'package:meditrina_01/screens/online_pathalogy/pathalogy_payment.dart';
 
@@ -55,38 +56,51 @@ class My_OnlinePathalogyState extends State<MyOnlinePathalogy> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Online Pathology Tests"),
-        backgroundColor: const Color.fromARGB(255, 8, 164, 196),
-      ),
-      drawer: MyDrawer(),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                // Search Box
-                // Padding(
-                //   padding: const EdgeInsets.all(12.0),
-                //   child: TextField(
-                //     onChanged: _filterByTestName,
-                //     decoration: InputDecoration(
-                //       hintText: 'Search by test name',
-                //       prefixIcon: const Icon(Icons.search),
-                //       border: OutlineInputBorder(
-                //         borderRadius: BorderRadius.circular(10),
-                //       ),
-                //     ),
-                //   ),
-                // ),
+    return PopScope(
+      canPop: false, // This prevents default back behavior
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => MyHomePage()),
+            );
+          });
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Online Pathology Tests"),
+          backgroundColor: const Color.fromARGB(255, 8, 164, 196),
+        ),
+        drawer: MyDrawer(),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  // Search Box
+                  // Padding(
+                  //   padding: const EdgeInsets.all(12.0),
+                  //   child: TextField(
+                  //     onChanged: _filterByTestName,
+                  //     decoration: InputDecoration(
+                  //       hintText: 'Search by test name',
+                  //       prefixIcon: const Icon(Icons.search),
+                  //       border: OutlineInputBorder(
+                  //         borderRadius: BorderRadius.circular(10),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
 
-                // List of Tests
-                Expanded(
-                    child: filteredTests.isEmpty
-                        ? Text('No tests found')
-                        : buildPathologyTestsList()),
-              ],
-            ),
+                  // List of Tests
+                  Expanded(
+                      child: filteredTests.isEmpty
+                          ? Text('No tests found')
+                          : buildPathologyTestsList()),
+                ],
+              ),
+      ),
     );
   }
 
@@ -163,11 +177,11 @@ class My_OnlinePathalogyState extends State<MyOnlinePathalogy> {
           padding: const EdgeInsets.all(16.0),
           child: ElevatedButton.icon(
             icon: Icon(
-              Icons.payment,
+              Icons.shopping_basket_outlined,
               color: Colors.white,
             ),
             label: Text(
-              'Proceed to Payment (${selectedTests.length})',
+              'Proceed to Cart (${selectedTests.length})',
               style: TextStyle(color: Colors.white),
             ),
             style: ElevatedButton.styleFrom(
@@ -181,7 +195,7 @@ class My_OnlinePathalogyState extends State<MyOnlinePathalogy> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            PathalogyPayment(selectedTests: selectedTests),
+                            PathalogyPayment(cartItems: selectedTests),
                       ),
                     );
                   },

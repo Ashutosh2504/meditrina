@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Meditrina',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -76,7 +77,6 @@ class MyApp extends StatelessWidget {
         MyRoutes.service_providers: (context) => ServiceProviders(),
         MyRoutes.patients_portal: (context) => PatientPortal(),
         MyRoutes.patients_rights: (context) => PatientRightsScreen(),
-       
       },
     );
   }

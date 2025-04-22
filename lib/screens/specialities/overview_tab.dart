@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class OverviewTab extends StatefulWidget {
   final Map<String, dynamic> department;
@@ -62,10 +63,10 @@ class _OverviewTabState extends State<OverviewTab> {
             fit: BoxFit.cover,
           ),
           const SizedBox(height: 16),
-          Text(
-            departmentContent ?? "No description available.",
-            style: TextStyle(fontSize: 16),
-            textAlign: TextAlign.justify,
+          Html(
+            data: departmentContent ?? "No description available.",
+            // style: TextStyle(fontSize: 16),
+            // textAlign: TextAlign.justify,
           ),
         ],
       ),

@@ -68,12 +68,14 @@ class _MySpecialitiesState extends State<MySpecialities> {
       _launchDialer(item["phone"]);
     } else if (item.containsKey("url")) {
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => WebviewComponent(
-                    webviewUrl: item["url"],
-                    title: "",
-                  )));
+        context,
+        MaterialPageRoute(
+          builder: (context) => WebviewComponent(
+            webviewUrl: item["url"],
+            title: "",
+          ),
+        ),
+      );
     }
   }
 

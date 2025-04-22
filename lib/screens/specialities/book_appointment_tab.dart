@@ -132,50 +132,6 @@ class _BookAppointmentTabState extends State<BookAppointmentTab> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
-              initialValue: widget.department,
-              readOnly: true,
-              decoration: InputDecoration(
-                labelText: 'Department',
-                labelStyle: TextStyle(color: color),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: color),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            doctors.isEmpty
-                ? TextFormField(
-                    controller: manualDoctorController,
-                    decoration: InputDecoration(
-                      labelText: 'Enter Doctor Name',
-                      labelStyle: TextStyle(color: color),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: color),
-                      ),
-                    ),
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Required' : null,
-                  )
-                : DropdownButtonFormField<DocModel>(
-                    value: selectedDoctor,
-                    items: doctors.map((doctor) {
-                      return DropdownMenuItem<DocModel>(
-                        value: doctor,
-                        child: Text(doctor.doctorName),
-                      );
-                    }).toList(),
-                    onChanged: (DocModel? newValue) {
-                      setState(() => selectedDoctor = newValue);
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Select Doctor',
-                      labelStyle: TextStyle(color: color),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: color),
-                      ),
-                    ),
-                  ),
             const SizedBox(height: 16),
             TextFormField(
               controller: nameController,
@@ -263,6 +219,50 @@ class _BookAppointmentTabState extends State<BookAppointmentTab> {
               trailing: Icon(Icons.access_time, color: color),
               onTap: pickTime,
             ),
+            TextFormField(
+              initialValue: widget.department,
+              readOnly: true,
+              decoration: InputDecoration(
+                labelText: 'Department',
+                labelStyle: TextStyle(color: color),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: color),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            doctors.isEmpty
+                ? TextFormField(
+                    controller: manualDoctorController,
+                    decoration: InputDecoration(
+                      labelText: 'Enter Doctor Name',
+                      labelStyle: TextStyle(color: color),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: color),
+                      ),
+                    ),
+                    validator: (value) =>
+                        value == null || value.isEmpty ? 'Required' : null,
+                  )
+                : DropdownButtonFormField<DocModel>(
+                    value: selectedDoctor,
+                    items: doctors.map((doctor) {
+                      return DropdownMenuItem<DocModel>(
+                        value: doctor,
+                        child: Text(doctor.doctorName),
+                      );
+                    }).toList(),
+                    onChanged: (DocModel? newValue) {
+                      setState(() => selectedDoctor = newValue);
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Select Doctor',
+                      labelStyle: TextStyle(color: color),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: color),
+                      ),
+                    ),
+                  ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: handleSubmit,

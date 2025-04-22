@@ -1,29 +1,29 @@
 // To parse this JSON data, do
 //
-//     final serviceProvidersModel = serviceProvidersModelFromJson(jsonString);
+//     final affiliationsModel = affiliationsModelFromJson(jsonString);
 
 import 'dart:convert';
 
-ServiceProvidersModel serviceProvidersModelFromJson(String str) =>
-    ServiceProvidersModel.fromJson(json.decode(str));
+AffiliationsModel affiliationsModelFromJson(String str) =>
+    AffiliationsModel.fromJson(json.decode(str));
 
-String serviceProvidersModelToJson(ServiceProvidersModel data) =>
+String affiliationsModelToJson(AffiliationsModel data) =>
     json.encode(data.toJson());
 
-class ServiceProvidersModel {
+class AffiliationsModel {
   String status;
-  List<ServiceProvider> data;
+  List<Affiliation> data;
 
-  ServiceProvidersModel({
+  AffiliationsModel({
     required this.status,
     required this.data,
   });
 
-  factory ServiceProvidersModel.fromJson(Map<String, dynamic> json) =>
-      ServiceProvidersModel(
+  factory AffiliationsModel.fromJson(Map<String, dynamic> json) =>
+      AffiliationsModel(
         status: json["status"],
-        data: List<ServiceProvider>.from(
-            json["data"].map((x) => ServiceProvider.fromJson(x))),
+        data: List<Affiliation>.from(
+            json["data"].map((x) => Affiliation.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -32,7 +32,7 @@ class ServiceProvidersModel {
       };
 }
 
-class ServiceProvider {
+class Affiliation {
   String id;
   String logoName;
   String logo;
@@ -40,7 +40,7 @@ class ServiceProvider {
   String status;
   String logoType;
 
-  ServiceProvider({
+  Affiliation({
     required this.id,
     required this.logoName,
     required this.logo,
@@ -49,14 +49,13 @@ class ServiceProvider {
     required this.logoType,
   });
 
-  factory ServiceProvider.fromJson(Map<String, dynamic> json) =>
-      ServiceProvider(
+  factory Affiliation.fromJson(Map<String, dynamic> json) => Affiliation(
         id: json["id"],
         logoName: json["logo_name"],
         logo: json["logo"],
-        date: json["date"]!,
+        date: json["date"],
         status: json["status"],
-        logoType: json["logo_type"]!,
+        logoType: json["logo_type"],
       );
 
   Map<String, dynamic> toJson() => {

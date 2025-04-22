@@ -1,15 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:marquee/marquee.dart';
+import 'package:meditrina_01/screens/about_us/about_us.dart';
 import 'package:meditrina_01/screens/drawers/drawer.dart';
 import 'package:meditrina_01/screens/find_a_doctor/doctor.dart';
 import 'package:meditrina_01/screens/our_facilities/our_facilities.dart';
 import 'package:meditrina_01/screens/specialities/specialities.dart';
 import 'package:meditrina_01/screens/venue/venue.dart';
 import 'package:meditrina_01/util/routes.dart';
-import 'package:meditrina_01/util/webview.dart';
-import 'package:meditrina_01/widgets/my_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -34,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
     "assets/images/top_image.jpg",
     "assets/images/abuss.jpg",
     "assets/images/aabbuuss.jpg",
-    "assets/images/s1.png",
+    // "assets/images/s1.png",
   ];
 
   final List<Map<String, dynamic>> gridItems = [
@@ -50,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     },
     {
       "title": "Call Ambulance",
-      "icon": "assets/images/q18.png",
+      "icon": "assets/images/ambulance2.png",
       "phone": "07126669612"
       // "screen": ScreenThree()
     },
@@ -84,14 +82,14 @@ class _MyHomePageState extends State<MyHomePage> {
       // Open the dialer for the ambulance
       _launchDialer(item["phone"]);
     } else if (item.containsKey("url")) {
-      // Open the dialer for the ambulance
-
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (ctxt) =>
-              WebviewComponent(title: item["title"], webviewUrl: item["url"]),
-        ),
-      );
+      final Uri url = Uri.parse(item["url"]);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url,
+            mode: LaunchMode
+                .externalApplication); // <-- This line ensures it opens in browser
+      } else {
+        print("Could not launch ${item["url"]}");
+      }
     }
   }
 
@@ -167,17 +165,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
               },
               child: Container(
-                width: double.infinity, // Ensure full width
+                width: double.infinity,
                 height: 100,
-
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Image.asset(
                       gridItems[rowIndex * 3 + index]["icon"],
+                      height: 30,
+                      width: 30,
+                      fit: BoxFit.contain,
                       color: color,
                     ),
-                    SizedBox(height: 2),
+                    SizedBox(height: 1),
                     Text(
                       gridItems[rowIndex * 3 + index]["title"],
                       textAlign: TextAlign.center,
@@ -231,9 +231,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Meditrina Hospital",
+          " Meditrina Institute of Medical Sciences",
+          softWrap: true,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              color: color, fontWeight: FontWeight.bold, fontSize: 20),
+              color: color, fontWeight: FontWeight.bold, fontSize: 16),
         ),
         backgroundColor: Colors.white,
       ),
@@ -279,47 +281,37 @@ class _MyHomePageState extends State<MyHomePage> {
                   margin: EdgeInsets.all(4),
                   width: _currentPage == index ? 12 : 8,
                   height: _currentPage == index ? 12 : 8,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentPage == index ? Colors.blue : Colors.grey,
-                  ),
                 );
               }),
             ),
-            Center(
-              child: SizedBox(
-                height: 50, // Adjust height as needed
-                child: Row(children: [
-                  // Image.asset(
-                  //   'assets/images/new.gif', // Adjust the path to your asset folder
-                  //   width: 60,
-                  //   height: 60,
-                  //   fit: BoxFit.cover,
-                  // ),
-                  Expanded(
-                    child: Marquee(
-                      text: 'Meditrina Institute Of Medical Sciences... 🚀',
-                      style: TextStyle(
-                          color: color,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                      scrollAxis: Axis.horizontal,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+            // Center(
+            //   child: SizedBox(
+            //     height: 50, // Adjust height as needed
+            //     child: Row(children: [
+            //       Expanded(
+            //         child: Marquee(
+            //           text: '🚀...Meditrina Institute Of Medical Sciences... ',
+            //           style: TextStyle(
+            //               color: color,
+            //               fontSize: 20,
+            //               fontWeight: FontWeight.bold),
+            //           scrollAxis: Axis.horizontal,
+            //           crossAxisAlignment: CrossAxisAlignment.center,
 
-                      blankSpace: 50.0, // Space between loops
-                      velocity: 50.0, // Speed of movement
-                      pauseAfterRound:
-                          Duration(seconds: 1), // Pause between rounds
-                      startPadding: 10.0, // Padding before start
-                      accelerationDuration:
-                          Duration(seconds: 1), // Smooth start
-                      decelerationDuration: Duration(milliseconds: 500),
-                      // Smooth stop
-                    ),
-                  ),
-                ]),
-              ),
-            ),
+            //           blankSpace: 50.0, // Space between loops
+            //           velocity: 50.0, // Speed of movement
+            //           pauseAfterRound:
+            //               Duration(seconds: 1), // Pause between rounds
+            //           startPadding: 10.0, // Padding before start
+            //           accelerationDuration:
+            //               Duration(seconds: 1), // Smooth start
+            //           decelerationDuration: Duration(milliseconds: 500),
+            //           // Smooth stop
+            //         ),
+            //       ),
+            //     ]),
+            //   ),
+            // ),
 
             buildRow(0, context),
             buildDivider(),
@@ -372,40 +364,50 @@ class _MyHomePageState extends State<MyHomePage> {
                     MainAxisAlignment.spaceEvenly, // ✅ Space between containers
                 children: [
                   // 🖼️ First Image Container with Text
-                  Column(
-                    children: [
-                      Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     color: Colors.black26,
-                          //     blurRadius: 2,
-                          //     spreadRadius: 1,
-                          //     offset: Offset(2, 2),
-                          //   ),
-                          // ],
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyAboutUs(),
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            "assets/images/about.jpg",
-                            fit: BoxFit.fill,
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //     color: Colors.black26,
+                            //     blurRadius: 2,
+                            //     spreadRadius: 1,
+                            //     offset: Offset(2, 2),
+                            //   ),
+                            // ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              "assets/images/about.jpg",
+                              fit: BoxFit.fill,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 8), // ✅ Space between image and text
-                      Text(
-                        "About Us", // ✅ Change text as needed
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            color: color),
-                      ),
-                    ],
+                        SizedBox(height: 8), // ✅ Space between image and text
+                        Text(
+                          "About Us", // ✅ Change text as needed
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              color: color),
+                        ),
+                      ],
+                    ),
                   ),
 
                   // 🖼️ Second Image Container with Text
@@ -485,7 +487,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         borderRadius: BorderRadius.circular(
                             12), // ✅ Rounded image corners
                         child: Image.asset(
-                          "assets/images/google.jpg",
+                          "assets/images/loc.png",
                           width: double.infinity,
                           height: 200,
                           fit: BoxFit.fill,
@@ -499,29 +501,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            MySlider(),
-
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //   children: List.generate(3, (index) => buildGridItem(index + 1)),
-            // ),
-
-            // Single line separator
+            //const MySlider(),
           ],
         ),
       ),
     );
   }
-
-  // // Grid item widget (Icon + Text)
-  // Widget buildGridItem(int index) {
-  //   return Column(
-  //     mainAxisSize: MainAxisSize.min,
-  //     children: [
-  //       Icon(Icons.star, size: 40, color: Colors.blue),
-  //       SizedBox(height: 4),
-  //       Text("Item $index"),
-  //     ],
-  //   );
-  // }
 }

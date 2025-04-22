@@ -1,14 +1,23 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:meditrina_01/screens/affiliations/affiliations.dart';
 import 'package:meditrina_01/screens/book_appointment/book_appointment.dart';
 import 'package:meditrina_01/screens/contact_us/contact_us.dart';
+import 'package:meditrina_01/screens/feedback/feedback.dart';
+import 'package:meditrina_01/screens/gallery/gallery_model.dart';
 import 'package:meditrina_01/screens/home/my_home.dart';
+import 'package:meditrina_01/screens/homecare_assistance/homecare_assistance.dart';
+import 'package:meditrina_01/screens/medical_tourism/medical_tourism.dart';
+import 'package:meditrina_01/screens/medical_tourism/medical_tourism_model.dart';
+import 'package:meditrina_01/screens/packages/packages.dart';
 import 'package:meditrina_01/screens/patient_portal/patient_info.dart';
 import 'package:meditrina_01/screens/patient_portal/patient_portal.dart';
 import 'package:meditrina_01/screens/patient_portal/verify_otp.dart';
 import 'package:meditrina_01/util/routes.dart';
 import 'package:meditrina_01/util/secure_storage_service.dart';
+import 'package:meditrina_01/util/webview.dart';
+import 'package:http/http.dart' as http;
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -18,6 +27,49 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
+  GalleryModel? galleryModel;
+  bool isGalleryLoading = true; // NEW
+
+  @override
+  void initState() {
+    super.initState();
+    loadGallery();
+  }
+
+  void loadGallery() async {
+    final result = await fetchGallery();
+    if (result != null) {
+      setState(() {
+        galleryModel = result;
+        isGalleryLoading = false;
+      });
+    } else {
+      setState(() {
+        isGalleryLoading = false;
+      });
+    }
+  }
+
+  Future<GalleryModel?> fetchGallery() async {
+    const url =
+        'https://meditrinainstitute.com/report_software/api/get_gallery.php'; // replace with your actual URL
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final jsonBody = json.decode(response.body);
+        return GalleryModel.fromJson(jsonBody);
+      } else {
+        print("Error: Server responded with ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching gallery: $e");
+    }
+
+    return null;
+  }
+
   // 🏷️ Section Header
   Widget _buildSectionHeader(String title) {
     return Padding(
@@ -175,21 +227,81 @@ class _MyDrawerState extends State<MyDrawer> {
           _buildDrawerItem("assets/images/group.png", "Service Providers", () {
             Navigator.pushReplacementNamed(context, MyRoutes.service_providers);
           }),
-          _buildDrawerItem(
-              "assets/images/user.png", "Homecare Assistance", () {}),
+          _buildDrawerItem("assets/images/user.png", "Homecare Assistance", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomeCareAssistanceScreen()),
+            );
+          }),
           // _buildDrawerItem(
           //     "assets/images/user.png", "Homecare Assistance", () {}),
-          _buildDrawerItem(
-              "assets/images/user.png", "Promotions & Packages", () {}),
-          _buildDrawerItem("assets/images/user.png", "Medical Tourism", () {}),
-          _buildDrawerItem("assets/images/user.png", "Gallery", () {}),
+          _buildDrawerItem("assets/images/user.png", "Promotions & Packages",
+              () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PackagesScreen()),
+            );
+          }),
+          _buildDrawerItem("assets/images/user.png", "Medical Tourism", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MedicalTourismScreen()),
+            );
+          }),
+          isGalleryLoading
+              ? ListTile(
+                  leading: Image.asset("assets/images/user.png", height: 20),
+                  title: Row(
+                    children: [
+                      Text("Gallery"),
+                      SizedBox(width: 10),
+                      SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ],
+                  ),
+                  onTap: null, // Disabled
+                )
+              : _buildDrawerItem("assets/images/user.png", "Gallery", () {
+                  if (galleryModel != null && galleryModel!.data.isNotEmpty) {
+                    final url = galleryModel!.data.first.galleryUrl;
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WebviewComponent(
+                          webviewUrl: url,
+                          title: "Gallery",
+                        ),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Gallery is unavailable.")),
+                    );
+                  }
+                }),
+
           _buildDrawerItem("assets/images/user.png", "Patient Rights", () {
             Navigator.pushReplacementNamed(context, MyRoutes.patients_rights);
           }),
           _buildDrawerItem("assets/images/user.png", "Health Tips", () {}),
-          _buildDrawerItem("assets/images/user.png", "Affiliations", () {}),
+          _buildDrawerItem("assets/images/user.png", "Affiliations", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AffiliationsScreen()),
+            );
+          }),
           // _buildDrawerItem("assets/images/user.png", "Pay Online", () {}),
-          _buildDrawerItem("assets/images/user.png", "Feedback Form", () {}),
+          _buildDrawerItem("assets/images/user.png", "Feedback Form", () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FeedbackScreen()),
+            );
+          }),
         ],
       ),
     );

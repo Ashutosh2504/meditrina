@@ -11,7 +11,7 @@ String reportsListToJson(ReportsList data) => json.encode(data.toJson());
 
 class ReportsList {
   String status;
-  List<Datum> data;
+  List<ReportsModel> data;
 
   ReportsList({
     required this.status,
@@ -20,7 +20,8 @@ class ReportsList {
 
   factory ReportsList.fromJson(Map<String, dynamic> json) => ReportsList(
         status: json["status"],
-        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+        data: List<ReportsModel>.from(
+            json["data"].map((x) => ReportsModel.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -29,7 +30,7 @@ class ReportsList {
       };
 }
 
-class Datum {
+class ReportsModel {
   String reportId;
   String reportName;
   String reportFile;
@@ -38,7 +39,7 @@ class Datum {
   String reportDate;
   String updateReportDate;
 
-  Datum({
+  ReportsModel({
     required this.reportId,
     required this.reportName,
     required this.reportFile,
@@ -48,7 +49,7 @@ class Datum {
     required this.updateReportDate,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory ReportsModel.fromJson(Map<String, dynamic> json) => ReportsModel(
         reportId: json["report_id"],
         reportName: json["report_name"],
         reportFile: json["report_file"],

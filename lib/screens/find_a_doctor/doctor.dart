@@ -162,7 +162,7 @@ class _MyDoctorState extends State<MyDoctor> {
         : GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.75,
+              childAspectRatio: 0.68, // reduced ratio to allow vertical space
             ),
             itemCount: doctors.length,
             itemBuilder: (context, index) {
@@ -172,31 +172,31 @@ class _MyDoctorState extends State<MyDoctor> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          DoctorInfoScreen(doctor: doctors[index]),
+                      builder: (context) => DoctorInfoScreen(doctor: doctor),
                     ),
                   );
                 },
                 child: Card(
                   elevation: 4,
                   margin: EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ClipOval(
-                        child: Image.network(
-                          doctor.docImage,
-                          width: 80,
-                          height: 100,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Icon(Icons.person, size: 80, color: Colors.grey),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        ClipOval(
+                          child: Image.network(
+                            doctor.docImage,
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Icon(
+                                Icons.person,
+                                size: 80,
+                                color: Colors.grey),
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
+                        SizedBox(height: 8),
+                        Text(
                           doctor.doctorName,
                           style: TextStyle(
                             fontSize: 14,
@@ -204,39 +204,44 @@ class _MyDoctorState extends State<MyDoctor> {
                             color: color,
                           ),
                           textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      // SizedBox(height: 4),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
+                        SizedBox(height: 4),
+                        Text(
                           doctor.departmentName,
                           style: TextStyle(
-                              fontSize: 12,
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                           textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      SizedBox(height: 8),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MyBookAppointment(
-                                selectedDepartment: doctor.departmentName,
-                                doctorList: [doctor],
+                        Spacer(), // pushes the button to the bottom
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyBookAppointment(
+                                  selectedDepartment: doctor.departmentName,
+                                  doctorList: [doctor],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        child: Text("Book Appointment",
+                            );
+                          },
+                          child: Text(
+                            "Book Appointment",
                             style: TextStyle(
-                                fontWeight: FontWeight.normal, color: color)),
-                      )
-                    ],
+                              fontWeight: FontWeight.normal,
+                              color: color,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               );
