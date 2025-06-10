@@ -12,7 +12,10 @@ def keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
-
+println "keyAlias: ${keystoreProperties['keyAlias']}"
+println "storeFile: ${keystoreProperties['storeFile']}"
+println "storePassword: ${keystoreProperties['storePassword']}"
+println "keyPassword: ${keystoreProperties['keyPassword']}"
 android {
     namespace = "com.example.meditrina_01"
     compileSdk = 34
@@ -34,8 +37,8 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 21
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 3
+        versionName = "1.0.2"
     }
     signingConfigs {
         release {

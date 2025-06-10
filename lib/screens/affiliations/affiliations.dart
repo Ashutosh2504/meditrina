@@ -69,13 +69,13 @@ class _AffiliationsScreenState extends State<AffiliationsScreen> {
                     final item = _affiliations[index];
                     return GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AffiliationDetailsScreen(affiliation: item),
-                          ),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) =>
+                        //         AffiliationDetailsScreen(affiliation: item),
+                        //   ),
+                        // );
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 16),

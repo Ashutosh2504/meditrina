@@ -56,8 +56,7 @@ class PackageDetailScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => PackageBookingForm(
-                            packageName: package.packageName),
+                        builder: (_) => PackageBookingForm(package: package),
                       ),
                     );
                   },

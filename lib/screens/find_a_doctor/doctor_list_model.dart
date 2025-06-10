@@ -42,6 +42,7 @@ class DocModel {
   String departmentName;
   String docImage;
   String date;
+  String profile;
 
   DocModel({
     required this.docId,
@@ -53,6 +54,7 @@ class DocModel {
     required this.departmentName,
     required this.docImage,
     required this.date,
+    required this.profile,
   });
 
   factory DocModel.fromJson(Map<String, dynamic> json) => DocModel(
@@ -65,6 +67,7 @@ class DocModel {
         departmentName: json["department_name"],
         docImage: json["doc_image"],
         date: json["date"],
+        profile: json["profile"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -77,5 +80,6 @@ class DocModel {
         "department_name": departmentName,
         "doc_image": docImage,
         "date": date,
+        "profile": profile,
       };
 }

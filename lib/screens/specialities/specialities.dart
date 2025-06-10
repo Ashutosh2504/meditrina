@@ -35,7 +35,8 @@ class _MySpecialitiesState extends State<MySpecialities> {
           departments = List<Map<String, dynamic>>.from(
               response.data["data"].map((dept) => {
                     'title': dept['department_name'],
-                    'icon': dept['logo_url'], // Fetching network image URL
+                    'icon': dept['logo_url'], 
+                    'banner_image': dept['banner_image'], // Fetching network image URL
                   }));
           filteredDepartments = departments;
           isLoading = false;

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:meditrina_01/screens/packages/packages_model.dart';
+import 'package:meditrina_01/util/alerts.dart';
+import 'package:meditrina_01/util/razorpay_gateway.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PackageBookingForm extends StatefulWidget {
-  final String packageName;
+  final Package package;
 
-  const PackageBookingForm({Key? key, required this.packageName})
-      : super(key: key);
+  const PackageBookingForm({Key? key, required this.package}) : super(key: key);
 
   @override
   State<PackageBookingForm> createState() => _PackageBookingFormState();
@@ -72,7 +75,7 @@ class _PackageBookingFormState extends State<PackageBookingForm> {
         'address': addressController.text.trim(),
         'preferred_time': preferredTimeController.text.trim(),
         'referred_by_doctor': referredByDoctorController.text.trim(),
-        'package_name': widget.packageName,
+        'package_name': widget.package.packageName,
       };
 
       try {
@@ -83,9 +86,25 @@ class _PackageBookingFormState extends State<PackageBookingForm> {
         );
 
         if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Form submitted successfully!')),
-          );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(content: Text('Form submitted successfully!')),
+          // );
+          // Alerts.showAlert(true, context,
+          //     "Your ${widget.package} package request has been received by our admin, we will get back to you in 2 hours");
+          // nameController.clear();
+          ageController.clear();
+          contactController.clear();
+          emailController.clear();
+          addressController.clear();
+          preferredTimeController.clear();
+          referredByDoctorController.clear();
+
+          // ✅ Reset gender to default
+          setState(() {
+            gender = 'Male';
+          });
+
+          // Navigator.pop(context);
         } else {
           throw Exception('Failed to submit form');
         }
@@ -95,6 +114,31 @@ class _PackageBookingFormState extends State<PackageBookingForm> {
           SnackBar(content: Text('Submission failed')),
         );
       }
+    }
+  }
+
+  void startPaymentFlow() {
+    if (_formKey.currentState!.validate()) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => RazorpayPaymentScreen(
+            amount: int.parse(
+                widget.package.amount), // assuming `amount` exists in `Package`
+            userName: nameController.text,
+            contact: contactController.text,
+            email: emailController.text,
+            onPaymentSuccess: (PaymentSuccessResponse response) {
+              submitForm();
+            },
+            onPaymentError: (PaymentFailureResponse response) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Payment failed: ${response.message}')),
+              );
+            },
+          ),
+        ),
+      );
     }
   }
 
@@ -157,9 +201,9 @@ class _PackageBookingFormState extends State<PackageBookingForm> {
                         padding:
                             EdgeInsets.symmetric(vertical: 14, horizontal: 24),
                       ),
-                      onPressed: submitForm,
-                      child:
-                          Text("Submit", style: TextStyle(color: Colors.white)),
+                      onPressed: startPaymentFlow,
+                      child: Text("Proceed to Pay ₹${widget.package.amount}",
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),

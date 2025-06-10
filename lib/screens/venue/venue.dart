@@ -4,18 +4,13 @@ import 'package:maps_launcher/maps_launcher.dart';
 class MyVenue extends StatelessWidget {
   const MyVenue({super.key});
   Future getMaps() {
-    return MapsLauncher.launchCoordinates(
-        21.1458, 79.0882, 'Meditrina Hospital');
+    return MapsLauncher.launchCoordinates(21.1336948, 79.0731785,
+        'Meditrina Institute of Medical Sciences - Best Multispeciality hospital in Nagpur');
   }
 
   @override
   Widget build(BuildContext context) {
-    Color color = const Color.fromARGB(
-      255,
-      8,
-      164,
-      196,
-    );
+    Color color = const Color.fromARGB(255, 8, 164, 196);
     return Positioned(
       bottom: 24, // ✅ Positioning from bottom
       child: ElevatedButton.icon(

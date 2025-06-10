@@ -57,7 +57,7 @@ class _OverviewTabState extends State<OverviewTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.network(
-            widget.department['icon'],
+            widget.department['banner_image'],
             height: 200,
             width: double.infinity,
             fit: BoxFit.cover,

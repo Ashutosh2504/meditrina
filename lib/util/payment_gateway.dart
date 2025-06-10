@@ -5,10 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PaymentScreen extends StatefulWidget {
-  final double amount;
-  const PaymentScreen({
-    super.key,
+  final int amount;
+  final String name;
+  final String description;
+  final String contact;
+  final String email;
+
+  // Constructor to accept parameters
+  PaymentScreen({
     required this.amount,
+    required this.name,
+    required this.description,
+    required this.contact,
+    required this.email,
   });
   @override
   _PaymentScreenState createState() => _PaymentScreenState();
@@ -69,8 +78,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       'name': 'MediTrina Institute',
       'description': 'Appointment Booking',
       'prefill': {
-        'contact': '8459234792', // Pre-filled phone number
-        'email': 'ashup953@gmail.com' // Pre-filled email
+        'contact': widget.contact ?? '8459234792', // Pre-filled phone number
+        'email': widget.email?? 'ashup953@gmail.com' // Pre-filled email
       },
       'theme': {
         'color': '#0069E1' // Razorpay UI color

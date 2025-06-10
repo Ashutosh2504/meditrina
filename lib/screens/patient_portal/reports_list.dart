@@ -38,6 +38,7 @@ class ReportsModel {
   String patientName;
   String reportDate;
   String updateReportDate;
+  String doctorName;
 
   ReportsModel({
     required this.reportId,
@@ -47,6 +48,7 @@ class ReportsModel {
     required this.patientName,
     required this.reportDate,
     required this.updateReportDate,
+    required this.doctorName,
   });
 
   factory ReportsModel.fromJson(Map<String, dynamic> json) => ReportsModel(
@@ -57,6 +59,7 @@ class ReportsModel {
         patientName: json["patient_name"],
         reportDate: json["report_date"],
         updateReportDate: json["update_report_date"],
+        doctorName: json["doctor_name"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -67,5 +70,6 @@ class ReportsModel {
         "patient_name": patientName,
         "report_date": reportDate,
         "update_report_date": updateReportDate,
+        "doctor_name": doctorName,
       };
 }

@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final pathalogyPaymentModel = pathalogyPaymentModelFromJson(jsonString);
-
 import 'dart:convert';
 
 PathalogyPaymentModel pathalogyPaymentModelFromJson(String str) =>
@@ -62,4 +58,30 @@ class PathalogyPaymentModel {
         "date":
             "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
       };
+
+  PathalogyPaymentModel copyWith({
+    String? tnxId,
+    String? patientName,
+    String? email,
+    String? mobile,
+    List<String>? testsName,
+    String? amount,
+    String? status,
+    String? address,
+    String? time,
+    DateTime? date,
+  }) {
+    return PathalogyPaymentModel(
+      tnxId: tnxId ?? this.tnxId,
+      patientName: patientName ?? this.patientName,
+      email: email ?? this.email,
+      mobile: mobile ?? this.mobile,
+      testsName: testsName ?? this.testsName,
+      amount: amount ?? this.amount,
+      status: status ?? this.status,
+      address: address ?? this.address,
+      time: time ?? this.time,
+      date: date ?? this.date,
+    );
+  }
 }

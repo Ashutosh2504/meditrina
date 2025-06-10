@@ -4,6 +4,8 @@ import 'package:meditrina_01/screens/online_pathalogy/online_pathalogy_model.dar
 import 'dart:convert';
 
 import 'package:meditrina_01/screens/online_pathalogy/pathalogy_payment_model.dart';
+import 'package:meditrina_01/util/razorpay_gateway.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PathologyPaymentDetailsScreen extends StatefulWidget {
   final List<OnlinePathalogy> cartItems;
@@ -64,30 +66,7 @@ class _PathologyPaymentDetailsScreenState
     if (picked != null) setState(() => _pickupTime = picked);
   }
 
-  Future<void> _makePayment() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-
-    String tnxId = DateTime.now().millisecondsSinceEpoch.toString();
-
-    String formattedTime = _pickupTime != null
-        ? _pickupTime!.format(context)
-        : TimeOfDay.now().format(context);
-
-    PathalogyPaymentModel payment = PathalogyPaymentModel(
-      tnxId: tnxId,
-      patientName: _nameController.text,
-      email: _emailController.text,
-      mobile: _mobileController.text,
-      testsName: widget.cartItems.map((e) => e.testName).toList(),
-      amount: totalAmount.toStringAsFixed(2),
-      status: "success",
-      date: _pickupDate ?? DateTime.now(),
-      time: formattedTime,
-      address: _addressController.text,
-    );
-
+  Future<void> _submitPayment(PathalogyPaymentModel payment) async {
     try {
       final response = await http.post(
         Uri.parse(
@@ -96,23 +75,63 @@ class _PathologyPaymentDetailsScreenState
         body: jsonEncode(payment.toJson()),
       );
 
-      setState(() => _isLoading = false);
+      final res = json.decode(response.body);
 
-      if (response.statusCode == 200) {
-        final res = json.decode(response.body);
-        if (res["status"] == true || res["status"] == "true") {
-          _showSnackBar("Payment Successful!");
-          Navigator.pop(context, true);
-        } else {
-          _showSnackBar("Payment Failed: ${res["message"] ?? "Unknown error"}");
-        }
+      if (response.statusCode == 200 &&
+          (res['status'] == true || res['status'] == "true")) {
+        _showSnackBar(
+            "Payment ${payment.status == 'success' ? "Successful" : payment.status}");
+        if (payment.status == "success") Navigator.pop(context, true);
       } else {
-        _showSnackBar("Server error: ${response.statusCode}");
+        _showSnackBar(
+            "Payment ${payment.status} failed to record: ${res['message']}");
       }
     } catch (e) {
-      setState(() => _isLoading = false);
-      _showSnackBar("Error: $e");
+      _showSnackBar("Failed to record payment: $e");
     }
+  }
+
+  Future<void> _makePayment() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    String tnxId = DateTime.now().millisecondsSinceEpoch.toString();
+    String formattedTime = _pickupTime != null
+        ? _pickupTime!.format(context)
+        : TimeOfDay.now().format(context);
+
+    PathalogyPaymentModel baseModel = PathalogyPaymentModel(
+      tnxId: tnxId,
+      patientName: _nameController.text,
+      email: _emailController.text,
+      mobile: _mobileController.text,
+      testsName: widget.cartItems.map((e) => e.testName).toList(),
+      amount: totalAmount.toStringAsFixed(2),
+      status: "pending", // Initial
+      date: _pickupDate ?? DateTime.now(),
+      time: formattedTime,
+      address: _addressController.text,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RazorpayPaymentScreen(
+          amount: totalAmount.toInt(),
+          userName: _nameController.text,
+          contact: _mobileController.text,
+          email: _emailController.text,
+          onPaymentSuccess: (PaymentSuccessResponse res) {
+            _submitPayment(baseModel.copyWith(status: 'success'));
+          },
+          onPaymentError: (PaymentFailureResponse res) {
+            _submitPayment(baseModel.copyWith(status: 'failed'));
+          },
+          onExternalWallet: (ExternalWalletResponse res) {
+            _submitPayment(baseModel.copyWith(status: 'external_wallet'));
+          },
+        ),
+      ),
+    );
   }
 
   void _showSnackBar(String msg) {
@@ -129,90 +148,93 @@ class _PathologyPaymentDetailsScreenState
         ),
         backgroundColor: color,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: _buildInputDecoration("Patient Name", Icons.person),
-                validator: (val) =>
-                    val == null || val.isEmpty ? "Enter name" : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _mobileController,
-                decoration: _buildInputDecoration("Mobile", Icons.phone),
-                keyboardType: TextInputType.phone,
-                maxLength: 10,
-                validator: (val) => val == null || val.length != 10
-                    ? "Enter valid mobile"
-                    : null,
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: _emailController,
-                decoration: _buildInputDecoration("Email", Icons.email),
-                keyboardType: TextInputType.emailAddress,
-                validator: (val) => val == null || !val.contains("@")
-                    ? "Enter valid email"
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _addressController,
-                decoration: _buildInputDecoration("Address", Icons.home),
-                validator: (val) =>
-                    val == null || val.isEmpty ? "Enter address" : null,
-              ),
-              const SizedBox(height: 16),
-              InkWell(
-                onTap: _selectPickupDate,
-                child: InputDecorator(
-                  decoration: _buildInputDecoration(
-                      "Date of Pickup", Icons.calendar_today),
-                  child: Text(
-                    _pickupDate == null
-                        ? "Select date"
-                        : "${_pickupDate!.day}/${_pickupDate!.month}/${_pickupDate!.year}",
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration:
+                      _buildInputDecoration("Patient Name", Icons.person),
+                  validator: (val) =>
+                      val == null || val.isEmpty ? "Enter name" : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _mobileController,
+                  decoration: _buildInputDecoration("Mobile", Icons.phone),
+                  keyboardType: TextInputType.phone,
+                  maxLength: 10,
+                  validator: (val) => val == null || val.length != 10
+                      ? "Enter valid mobile"
+                      : null,
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: _buildInputDecoration("Email", Icons.email),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (val) => val == null || !val.contains("@")
+                      ? "Enter valid email"
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _addressController,
+                  decoration: _buildInputDecoration("Address", Icons.home),
+                  validator: (val) =>
+                      val == null || val.isEmpty ? "Enter address" : null,
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: _selectPickupDate,
+                  child: InputDecorator(
+                    decoration: _buildInputDecoration(
+                        "Date of Pickup", Icons.calendar_today),
+                    child: Text(
+                      _pickupDate == null
+                          ? "Select date"
+                          : "${_pickupDate!.day}/${_pickupDate!.month}/${_pickupDate!.year}",
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              InkWell(
-                onTap: _selectPickupTime,
-                child: InputDecorator(
-                  decoration: _buildInputDecoration(
-                      "Time of Pickup", Icons.access_time),
-                  child: Text(
-                    _pickupTime == null
-                        ? "Select time"
-                        : _pickupTime!.format(context),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: _selectPickupTime,
+                  child: InputDecorator(
+                    decoration: _buildInputDecoration(
+                        "Time of Pickup", Icons.access_time),
+                    child: Text(
+                      _pickupTime == null
+                          ? "Select time"
+                          : _pickupTime!.format(context),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Text("Total Amount: ₹${totalAmount.toStringAsFixed(2)}",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16)),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _makePayment,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: color,
-                  minimumSize: const Size.fromHeight(50),
-                ),
-                child: _isLoading
-                    ? const CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white)
-                    : const Text(
-                        "Make Payment",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-              )
-            ],
+                const SizedBox(height: 16),
+                Text("Total Amount: ₹${totalAmount.toStringAsFixed(2)}",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _makePayment,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: color,
+                    minimumSize: const Size.fromHeight(50),
+                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white)
+                      : const Text(
+                          "Proceed to Pay",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                )
+              ],
+            ),
           ),
         ),
       ),

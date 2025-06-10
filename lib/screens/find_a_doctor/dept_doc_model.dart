@@ -42,6 +42,7 @@ class DepartmentDoctors {
   String departmentName;
   String docImage;
   String date;
+  String profile;
 
   DepartmentDoctors({
     required this.docId,
@@ -53,6 +54,7 @@ class DepartmentDoctors {
     required this.departmentName,
     required this.docImage,
     required this.date,
+    required this.profile,
   });
 
   factory DepartmentDoctors.fromJson(Map<String, dynamic> json) =>
@@ -66,6 +68,7 @@ class DepartmentDoctors {
         departmentName: json["department_name"],
         docImage: json["doc_image"],
         date: json["date"],
+        profile: json["profile"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -78,5 +81,6 @@ class DepartmentDoctors {
         "department_name": departmentName,
         "doc_image": docImage,
         "date": date,
+        "profile": profile,
       };
 }

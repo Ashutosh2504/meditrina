@@ -1,8 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:meditrina_01/screens/book_appointment/book_appointment.dart';
 
 import 'package:meditrina_01/screens/find_a_doctor/doctor_list_model.dart';
+import 'package:meditrina_01/screens/find_a_doctor/doctor_profile.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import your model
 
 class DoctorInfoScreen extends StatefulWidget {
@@ -153,22 +155,37 @@ class _DoctorInfoScreenState extends State<DoctorInfoScreen> {
                               height: 50,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  // Handle View Profile
-                                  showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title: Text("View Profile"),
-                                      content: Text(
-                                          "This is the profile of Dr. ${widget.doctor.doctorName}."),
-                                      actions: [
-                                        TextButton(
-                                          child: Text("Close"),
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                        ),
-                                      ],
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => DoctorProfileScreen(
+                                          doctor: widget.doctor),
                                     ),
                                   );
+                                  // Handle View Profile
+                                  // showDialog(
+                                  //   context: context,
+                                  //   builder: (_) => AlertDialog(
+                                  //     title: Text("View Profile"),
+                                  //     content: widget.doctor.profile
+                                  //             .trim()
+                                  //             .isNotEmpty
+                                  //         ? Html(data: widget.doctor.profile)
+                                  //         : Text(
+                                  //             "This is the profile of Dr. ${widget.doctor.doctorName}.",
+                                  //           ),
+                                  //     actions: [
+                                  //       TextButton(
+                                  //         child: Text(
+                                  //           "Close",
+                                  //           style: TextStyle(color: color),
+                                  //         ),
+                                  //         onPressed: () =>
+                                  //             Navigator.pop(context),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // );
                                 },
                                 child: FittedBox(
                                   fit: BoxFit.scaleDown,

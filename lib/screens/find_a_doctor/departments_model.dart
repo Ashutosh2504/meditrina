@@ -34,22 +34,26 @@ class DepartmentInfo {
   String departmentName;
   String logoUrl;
   String uploadDate;
+  String bannerImage;
 
   DepartmentInfo({
     required this.departmentName,
     required this.logoUrl,
     required this.uploadDate,
+    required this.bannerImage,
   });
 
   factory DepartmentInfo.fromJson(Map<String, dynamic> json) => DepartmentInfo(
         departmentName: json["department_name"],
         logoUrl: json["logo_url"],
         uploadDate: json["upload_date"],
+        bannerImage: json["banner_image"],
       );
 
   Map<String, dynamic> toJson() => {
         "department_name": departmentName,
         "logo_url": logoUrl,
         "upload_date": uploadDate,
+        "banner_image": bannerImage,
       };
 }

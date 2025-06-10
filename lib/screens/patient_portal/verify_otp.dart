@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:meditrina_01/screens/drawers/drawer.dart';
 import 'package:meditrina_01/screens/patient_portal/patient_info.dart';
 import 'package:meditrina_01/screens/patient_portal/reports_list.dart';
+import 'package:meditrina_01/util/alerts.dart';
 import 'package:meditrina_01/util/secure_storage_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -90,8 +91,25 @@ class _VerifyOtpState extends State<VerifyOtp> {
           final report = reportList[index];
           return ListTile(
             leading: const Icon(Icons.description, color: Colors.blue),
-            title: Text(report.reportName, style: TextStyle(fontSize: 16)),
-            subtitle: Text("Date: ${report.reportDate}"),
+            title: Text(
+              report.reportName,
+              style: TextStyle(fontSize: 14),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  softWrap: true,
+                  "Referred by ${report.doctorName}",
+                  style: TextStyle(fontSize: 10),
+                ),
+                SizedBox(height: 2), // a little spacing
+                Text(
+                  "Date: ${report.reportDate}",
+                  style: TextStyle(fontSize: 10),
+                ),
+              ],
+            ),
             trailing: IconButton(
               icon: Icon(
                 report.reportFile == null || report.reportFile.isEmpty
@@ -102,7 +120,10 @@ class _VerifyOtpState extends State<VerifyOtp> {
                     : Colors.green,
               ),
               onPressed: report.reportFile == null || report.reportFile.isEmpty
-                  ? null
+                  ? () {
+                      Alerts.showAlert(
+                          false, context, "Report not yet available");
+                    }
                   : () => _openReport(report.reportFile),
             ),
           );

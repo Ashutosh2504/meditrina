@@ -56,7 +56,7 @@ class PathalogyPayment extends StatelessWidget {
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
                   color: Colors.grey[200],
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,7 +82,7 @@ class PathalogyPayment extends StatelessWidget {
                           backgroundColor:
                               const Color.fromARGB(255, 8, 164, 196),
                         ),
-                        child: const Text("Proceed",
+                        child: const Text("Pay",
                             style:
                                 TextStyle(fontSize: 16, color: Colors.white)),
                       )

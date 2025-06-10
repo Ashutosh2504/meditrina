@@ -21,6 +21,7 @@ class BookAppointmentModel {
   String currentDates;
   String fees;
   String paymentStatus;
+  String time;
 
   BookAppointmentModel({
     required this.name,
@@ -33,21 +34,22 @@ class BookAppointmentModel {
     required this.currentDates,
     required this.fees,
     required this.paymentStatus,
+    required this.time,
   });
 
   factory BookAppointmentModel.fromJson(Map<String, dynamic> json) =>
       BookAppointmentModel(
-        name: json["name"],
-        mobile: json["mobile"],
-        email: json["email"],
-        address: json["address"],
-        appointmentDate: json["appointment_date"],
-        department: json["department"],
-        doctor: json["doctor"],
-        currentDates: json["current_dates"],
-        fees: json["fees"],
-        paymentStatus: json["payment_status"],
-      );
+          name: json["name"],
+          mobile: json["mobile"],
+          email: json["email"],
+          address: json["address"],
+          appointmentDate: json["appointment_date"],
+          department: json["department"],
+          doctor: json["doctor"],
+          currentDates: json["current_dates"],
+          fees: json["fees"],
+          paymentStatus: json["payment_status"],
+          time: json["time"]);
 
   Map<String, dynamic> toJson() => {
         "name": name,
@@ -60,9 +62,6 @@ class BookAppointmentModel {
         "current_dates": currentDates,
         "fees": fees,
         "payment_status": paymentStatus,
+        "time": time,
       };
-
-      
 }
-
-

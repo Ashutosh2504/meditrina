@@ -288,7 +288,7 @@ class _MyDrawerState extends State<MyDrawer> {
           _buildDrawerItem("assets/images/user.png", "Patient Rights", () {
             Navigator.pushReplacementNamed(context, MyRoutes.patients_rights);
           }),
-          _buildDrawerItem("assets/images/user.png", "Health Tips", () {}),
+          // _buildDrawerItem("assets/images/user.png", "Health Tips", () {}),
           _buildDrawerItem("assets/images/user.png", "Affiliations", () {
             Navigator.push(
               context,

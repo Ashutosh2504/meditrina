@@ -81,6 +81,7 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
               departmentName: e.departmentName,
               docImage: e.docImage,
               date: e.date,
+              profile: e.profile,
             ))
         .toList();
   }
